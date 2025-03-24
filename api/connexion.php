@@ -22,7 +22,7 @@
     $courriel = $data['courriel'];
     $motDePasse = $data['mot-de-passe'];
 
-    $stmt = $pdo->prepare("SELECT courriel, mot_de_passe FROM utilisateur WHERE courriel = ?");
+    $stmt = $pdo->prepare("SELECT courriel, mot_de_passe FROM utilisateurs WHERE courriel = ?");
     $stmt-> execute([$courriel]);
 
     $utilisateur = $stmt->fetch();

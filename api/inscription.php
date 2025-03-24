@@ -23,7 +23,7 @@
     $motDePasse = $data['mot-de-passe'];
     $confirmerMDP = $data['conf-mdp']; 
 
-    $stmt = $pdo->prepare("SELECT courriel FROM utilisateur WHERE courriel = ?");
+    $stmt = $pdo->prepare("SELECT courriel FROM utilisateurs WHERE courriel = ?");
     $stmt -> execute([$courriel]);
     $confirmerCourriel = $stmt -> fetch();
 
@@ -31,20 +31,19 @@
         echo json_encode(["statut" => false , "message" => "Email invalide"]);
     } else {
         if($motDePasse === $confirmerMDP){
-
-        $stmt = $pdo->prepare("INSERT INTO calendrier (nom, en_cour_modif) VALUES (?, ?)");
-        $stmt->execute([$nomUtilisateur, 0]);
-
-        $idCalendrier = $pdo->lastInsertId();
-
+        
         $MDPHache = password_hash($motDePasse, PASSWORD_DEFAULT);
-
-        $stmt = $pdo->prepare("INSERT INTO utilisateur (nom_utilisateur, courriel, mot_de_passe, id_calendrier) VALUES (?, ?, ?, ?)");
-        $stmt -> execute([$nomUtilisateur, $courriel, $MDPHache, $idCalendrier]);
+        $stmt = $pdo->prepare("INSERT INTO utilisateurs (nom, courriel, mot_de_passe) VALUES (?, ?, ?)");
+        $stmt -> execute([$nomUtilisateur, $courriel, $MDPHache]);
 
         $idUtilisateur = $pdo->lastInsertId();
 
-        $stmt = $pdo->prepare("INSERT INTO calendrier_utilisateur (id_utilisateur, id_calendrier, statut) VALUES (?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO calendriers (nom, auteur_id) VALUES (?, ?)");
+        $stmt->execute([$nomUtilisateur, $idUtilisateur]);
+
+        $idCalendrier = $pdo->lastInsertId();
+
+        $stmt = $pdo->prepare("INSERT INTO calendrier_utilisateur (user_id, calendar_id, role) VALUES (?, ?, ?)");
         $stmt->execute([$idUtilisateur, $idCalendrier, "Auteur"]);
         echo json_encode(["statut" => true]);
 
