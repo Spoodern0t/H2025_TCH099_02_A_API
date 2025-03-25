@@ -1,18 +1,19 @@
 <?php
-    header('Content-Type: application/json');;
+
+    header('Content-Type: application/json');
 
     $data = json_decode(file_get_contents("php://input"), true);
 
     // Verifier si les données ont été bien décoder
     if(json_last_error() !== JSON_ERROR_NONE){
         http_response_code(400);
-        echo "Erreur du JSON : " . json_last_error_msg();
+        echo json_encode(["token" => false, "message" => "Erreur JSON: " .json_last_error_msg()]);
         exit;
     }
 
     // Verifier le format du tableau $data
     if(!is_array($data)){
-        echo "Erreur du tableau";
+        echo json_encode(["token" => false, "message" => "Erreur de format du JSON"]);
         exit;
     }
 
@@ -28,7 +29,7 @@
     $confirmerCourriel = $stmt -> fetch();
 
     if($confirmerCourriel){
-        echo json_encode(["statut" => false , "message" => "Email invalide"]);
+        echo json_encode(["token" => false , "message" => "Email invalide"]);
     } else {
         if($motDePasse === $confirmerMDP){
         
@@ -45,10 +46,10 @@
 
         $stmt = $pdo->prepare("INSERT INTO calendrier_utilisateur (user_id, calendar_id, role) VALUES (?, ?, ?)");
         $stmt->execute([$idUtilisateur, $idCalendrier, "Auteur"]);
-        echo json_encode(["statut" => true]);
+        echo json_encode(["token" => true]);
 
         } else{
-            echo json_encode(["statut" => false, "message" => "Mot de passe non similaire"]);
+            echo json_encode(["token" => false, "message" => "Mot de passe non similaire"]);
         }
     }
 ?>
