@@ -7,20 +7,20 @@
     use Firebase\JWT\JWT;
     use Firebase\JWT\Key;
 
-    header('Content-Type: application/json');;
+    header('Content-Type: application/json');
 
     $data = json_decode(file_get_contents("php://input"), true);
 
     // Verifier si les données ont été bien décoder
     if(json_last_error() !== JSON_ERROR_NONE){
         http_response_code(400);
-        echo json_encode(["token" => false, "message" => "Erreur JSON: " .json_last_error_msg()]);
+        echo json_encode(["token" => false]);
         exit;
     }
 
     // Verifier le format du tableau $data
     if(!is_array($data)){
-        echo json_encode(["token" => false, "message" => "Erreur de format du JSON"]);
+        echo json_encode(["token" => false]);
         exit;
     }
 
@@ -69,15 +69,15 @@
                               "user" => [
                                 "id" => $utilisateur['id'],
                                 "courriel" => $utilisateur['courriel'],
-                                "nom" => $utilisateur['nom']
-                              ],
-                              "jwt" => $jwt
+                                "nom" => $utilisateur['nom'],
+                                "password" => $motDePasse
+                              ]
                             ]);
         } else {
-            echo json_encode(["token" => false , "message" => "Mot de passe incorrect"]); 
+            echo json_encode(["token" => false]); 
         }
     } else {
-        echo json_encode(["token" => false, "message" => "Utilisateur incorrect"]);
+        echo json_encode(["token" => false]);
     }
 
 ?>

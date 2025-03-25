@@ -14,13 +14,13 @@
     // Verifier si les données ont été bien décoder
     if(json_last_error() !== JSON_ERROR_NONE){
         http_response_code(400);
-        echo json_encode(["token" => false, "message" => "Erreur JSON: " .json_last_error_msg()]);
+        echo json_encode(["token" => false]);
         exit;
     }
 
     // Verifier le format du tableau $data
     if(!is_array($data)){
-        echo json_encode(["token" => false, "message" => "Erreur de format du JSON"]);
+        echo json_encode(["token" => false]);
         exit;
     }
 
@@ -36,7 +36,7 @@
     $confirmerCourriel = $stmt -> fetch();
 
     if($confirmerCourriel){
-        echo json_encode(["token" => false , "message" => "Email invalide"]);
+        echo json_encode(["token" => false]);
     } else {
         if($motDePasse === $confirmerMDP){
         
@@ -88,13 +88,13 @@
                               "user" => [
                                 "id" => $idUtilisateur,
                                 "courriel" => $courriel,
-                                "nom" => $nomUtilisateur
-                              ],
-                              "jwt" => $jwt
+                                "nom" => $nomUtilisateur,
+                                "password" => $motDePasse, 
+                              ]
                             ]);
 
         } else{
-            echo json_encode(["token" => false, "message" => "Mot de passe non similaire"]);
+            echo json_encode(["token" => false]);
         }
     }
 ?>
