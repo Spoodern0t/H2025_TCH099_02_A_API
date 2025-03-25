@@ -1,42 +1,9 @@
 <?php
-/*
 
-    bash : composer require firebase/php-jwt
-
-    use Firebase\JWT\JWT;
-
-    // Génération du token
-    $key = "votre_cle_secrete";
-
-    if ($utilisateur && password_verify($motDePasse, $utilisateur['mot_de_passe'])) {
-        $payload = [
-            "id" => $utilisateur['id'],
-            "nom" => $utilisateur['nom'],
-            "exp" => time() + 3600 // Expire dans 1 heure
-        ];
-        $token = JWT::encode($payload, $key, 'HS256');
-        echo json_encode(["token" => $token, "message" => "Connexion réussie"]);
-    } else {
-        echo json_encode(["token" => false, "message" => "Identifiants invalides"]);
-    }
-
-    // Vérification du token 
-        $headers = getallheaders();
-    if (!isset($headers['Authorization'])) {
-        echo json_encode(["message" => "Token manquant"]);
-        exit;
-    }
-
-    $token = str_replace("Bearer ", "", $headers['Authorization']);
-
-    try {
-        $decoded = JWT::decode($token, new Key($key, 'HS256'));
-        echo json_encode(["message" => "Token valide", "user_id" => $decoded->id]);
-    } catch (Exception $e) {
-        echo json_encode(["message" => "Token invalide: " . $e->getMessage()]);
-    }
-
-*/
+    // 1) IL faut installer composer
+    // 2) composer require firebase/php-jwt dans le fichier du projet
+    // Inclure les choses si dessus pour charger la bibliothèque 
+    require_once __DIR__ . '/../vendor/autoload.php';
     use Firebase\JWT\JWT;
     use Firebase\JWT\Key;
 
@@ -62,7 +29,7 @@
     $courriel = $data['courriel'];
     $motDePasse = $data['mot-de-passe'];
 
-    $stmt = $pdo->prepare("SELECT courriel, mot_de_passe FROM utilisateurs WHERE courriel = ?");
+    $stmt = $pdo->prepare("SELECT courriel, mot_de_passe, id, nom FROM utilisateurs WHERE courriel = ?");
     $stmt-> execute([$courriel]);
     $utilisateur = $stmt->fetch();
 
@@ -70,7 +37,42 @@
     // Envoie de JSON pour la verification bonne ou mouvaise.
     if($utilisateur){
         if($utilisateur && password_verify($motDePasse, $utilisateur['mot_de_passe'])) {
-            echo json_encode(["token" => true]);
+            
+            $key = bin2hex(random_bytes(32));
+            // Le token expire 30 minutes après avoir été créer
+            $tkRemis = time();
+            $tkExpirer = $tkRemis + 1800;
+
+            $payload = ["remit" => $tkRemis,
+                        "expire" => $tkExpirer,
+                        "token" => true, 
+                        "user" => [ 
+                            "courriel" => $courriel,
+                            "motDePasse" => $motDePasse,
+                            "nom" => $utilisateur['nom']
+                        ] 
+                    ];
+
+            $jwt = JWT::encode($payload, $key,'HS256');
+            // Envoie du token sous la forme suivante : 
+            /*
+            {
+                "token": true,
+                "user": {
+                    "id": "1",
+                    "courriel": "user@example.com",
+                    "nom": "John Doe"
+                    }
+            }
+            */
+            echo json_encode(["token" => true,
+                              "user" => [
+                                "id" => $utilisateur['id'],
+                                "courriel" => $utilisateur['courriel'],
+                                "nom" => $utilisateur['nom']
+                              ],
+                              "jwt" => $jwt
+                            ]);
         } else {
             echo json_encode(["token" => false , "message" => "Mot de passe incorrect"]); 
         }

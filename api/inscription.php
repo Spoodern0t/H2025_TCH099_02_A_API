@@ -1,5 +1,12 @@
 <?php
 
+    // 1) IL faut installer composer
+    // 2) composer require firebase/php-jwt dans le fichier du projet
+    // Inclure les choses si dessus pour charger la bibliothèque
+    require_once __DIR__ . '/../vendor/autoload.php';
+    use Firebase\JWT\JWT;
+    use Firebase\JWT\Key;
+
     header('Content-Type: application/json');
 
     $data = json_decode(file_get_contents("php://input"), true);
@@ -39,14 +46,52 @@
 
         $idUtilisateur = $pdo->lastInsertId();
 
+        // A voir avec les gars
         $stmt = $pdo->prepare("INSERT INTO calendriers (nom, auteur_id) VALUES (?, ?)");
         $stmt->execute([$nomUtilisateur, $idUtilisateur]);
 
         $idCalendrier = $pdo->lastInsertId();
 
+        // A voir avec les gars
         $stmt = $pdo->prepare("INSERT INTO calendrier_utilisateur (user_id, calendar_id, role) VALUES (?, ?, ?)");
         $stmt->execute([$idUtilisateur, $idCalendrier, "Auteur"]);
-        echo json_encode(["token" => true]);
+        
+        // Création du token
+        $key = bin2hex(random_bytes(32));
+            // Le token expire 30 minutes après avoir été créer
+            $tkRemis = time();
+            $tkExpirer = $tkRemis + 1800;
+
+            $payload = ["remit" => $tkRemis,
+                        "expire" => $tkExpirer,
+                        "token" => true, 
+                        "user" => [ 
+                            "courriel" => $courriel,
+                            "motDePasse" => $motDePasse,
+                            "nom" => $nomUtilisateur
+                        ] 
+                    ];
+
+            $jwt = JWT::encode($payload, $key,'HS256');
+            // Envoie du token sous la forme suivante : 
+            /*
+                {
+                "token": true,
+                "user": {
+                    "id": "1",
+                    "courriel": "user@example.com",
+                    "nom": "John Doe"
+                    }
+                }
+            */
+            echo json_encode(["token" => true,
+                              "user" => [
+                                "id" => $idUtilisateur,
+                                "courriel" => $courriel,
+                                "nom" => $nomUtilisateur
+                              ],
+                              "jwt" => $jwt
+                            ]);
 
         } else{
             echo json_encode(["token" => false, "message" => "Mot de passe non similaire"]);
