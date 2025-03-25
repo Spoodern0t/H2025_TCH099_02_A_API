@@ -4,6 +4,8 @@
     // 2) composer require firebase/php-jwt dans le fichier du projet
     // Inclure les choses si dessus pour charger la bibliothèque 
     require_once __DIR__ . '/../vendor/autoload.php';
+    include(__DIR__ . '/../config.php');
+
     use Firebase\JWT\JWT;
     use Firebase\JWT\Key;
 
@@ -23,8 +25,6 @@
         echo json_encode(["token" => false]);
         exit;
     }
-
-    include '../config.php';
 
     $courriel = $data['courriel'];
     $motDePasse = $data['mot-de-passe'];
