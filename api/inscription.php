@@ -1,12 +1,6 @@
 <?php
     
-    // 1) IL faut installer composer
-    // 2) composer require firebase/php-jwt dans le fichier du projet
-    // Inclure les choses si dessus pour charger la bibliothèque
-    require_once __DIR__ . '/../vendor/autoload.php';
     include(__DIR__ . '/../config.php');
-    use Firebase\JWT\JWT;
-    use Firebase\JWT\Key;
 
     header('Content-Type: application/json');
 
@@ -40,60 +34,31 @@
         if($motDePasse === $confirmerMDP){
         
         $MDPHache = password_hash($motDePasse, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("INSERT INTO utilisateurs (nom, courriel, mot_de_passe) VALUES (?, ?, ?)");
-        $stmt -> execute([$nomUtilisateur, $courriel, $MDPHache]);
 
-        $idUtilisateur = $pdo->lastInsertId();
+        try{
+            $pdo->beginTransaction();
 
-        // A voir avec les gars
-        $stmt = $pdo->prepare("INSERT INTO calendriers (nom, auteur_id) VALUES (?, ?)");
-        $stmt->execute([$nomUtilisateur, $idUtilisateur]);
+            $stmt = $pdo->prepare("INSERT INTO utilisateurs (nom, courriel, mot_de_passe) VALUES (?, ?, ?)");
+            $stmt -> execute([$nomUtilisateur, $courriel, $MDPHache]);
 
-        $idCalendrier = $pdo->lastInsertId();
+            $idUtilisateur = $pdo->lastInsertId();
 
-        // A voir avec les gars
-        $stmt = $pdo->prepare("INSERT INTO calendrier_utilisateur (user_id, calendar_id, role) VALUES (?, ?, ?)");
-        $stmt->execute([$idUtilisateur, $idCalendrier, "Auteur"]);
-        
-        // Création du token
-        $key = bin2hex(random_bytes(32));
-            // Le token expire 30 minutes après avoir été créer
-            $tkRemis = time();
-            $tkExpirer = $tkRemis + 1800;
+            $stmt2 = $pdo->prepare("INSERT INTO calendriers (nom, auteur_id) VALUES (?, ?)");
+            $stmt2->execute([$nomUtilisateur, $idUtilisateur]);
 
-            $payload = ["remit" => $tkRemis,
-                        "expire" => $tkExpirer,
-                        "token" => true, 
-                        "user" => [ 
-                            "courriel" => $courriel,
-                            "motDePasse" => $motDePasse,
-                            "nom" => $nomUtilisateur
-                        ] 
-                    ];
+            $idCalendrier = $pdo->lastInsertId();
 
-            $jwt = JWT::encode($payload, $key,'HS256');
-            // Envoie du token sous la forme suivante : 
-            /*
-                {
-                "token": true,
-                "user": {
-                    "id": "1",
-                    "courriel": "user@example.com",
-                    "nom": "John Doe"
-                    }
-                }
-            */
-            echo json_encode(["token" => true,
-                              "user" => [
-                                "id" => $idUtilisateur,
-                                "courriel" => $courriel,
-                                "nom" => $nomUtilisateur,
-                                "password" => $motDePasse, 
-                              ]
-                            ]);
+            $stmt3 = $pdo->prepare("INSERT INTO calendrier_utilisateur (user_id, id_calendrier, role) VALUES (?, ?, ?)");
+            $stmt3->execute([$idUtilisateur, $idCalendrier, "AUTHOR"]);
 
-        } else{
+            $pdo->commit();
+            // TODO retourne seulement true pour l'instant modifier quand je vais recevoir le document.
+            echo json_encode(["token" => true]);
+
+        } catch( \Throwable $e){
+            $pdo->rollback();
             echo json_encode(["token" => false]);
         }
     }
+}
 ?>

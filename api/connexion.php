@@ -1,13 +1,6 @@
 <?php
 
-    // 1) IL faut installer composer
-    // 2) composer require firebase/php-jwt dans le fichier du projet
-    // Inclure les choses si dessus pour charger la bibliothèque 
-    require_once __DIR__ . '/../vendor/autoload.php';
     include(__DIR__ . '/../config.php');
-
-    use Firebase\JWT\JWT;
-    use Firebase\JWT\Key;
 
     header('Content-Type: application/json');
 
@@ -26,8 +19,11 @@
         exit;
     }
 
-    $courriel = $data['courriel'];
+    $courriel = $data['adresse-courriel'];
     $motDePasse = $data['mot-de-passe'];
+
+    $pdo->beginTransaction();
+    $pdo->commit(); // TODO
 
     $stmt = $pdo->prepare("SELECT courriel, mot_de_passe, id, nom FROM utilisateurs WHERE courriel = ?");
     $stmt-> execute([$courriel]);
@@ -38,41 +34,8 @@
     if($utilisateur){
         if($utilisateur && password_verify($motDePasse, $utilisateur['mot_de_passe'])) {
             
-            $key = bin2hex(random_bytes(32));
-            // Le token expire 30 minutes après avoir été créer
-            $tkRemis = time();
-            $tkExpirer = $tkRemis + 1800;
-
-            $payload = ["remit" => $tkRemis,
-                        "expire" => $tkExpirer,
-                        "token" => true, 
-                        "user" => [ 
-                            "courriel" => $courriel,
-                            "motDePasse" => $motDePasse,
-                            "nom" => $utilisateur['nom']
-                        ] 
-                    ];
-
-            $jwt = JWT::encode($payload, $key,'HS256');
-            // Envoie du token sous la forme suivante : 
-            /*
-            {
-                "token": true,
-                "user": {
-                    "id": "1",
-                    "courriel": "user@example.com",
-                    "nom": "John Doe"
-                    }
-            }
-            */
-            echo json_encode(["token" => true,
-                              "user" => [
-                                "id" => $utilisateur['id'],
-                                "courriel" => $utilisateur['courriel'],
-                                "nom" => $utilisateur['nom'],
-                                "password" => $motDePasse
-                              ]
-                            ]);
+            // TODO retourne seulement true pour l'instant modifier quand je vais recevoir le document.
+            echo json_encode(["token" => true]);
         } else {
             echo json_encode(["token" => false]); 
         }
