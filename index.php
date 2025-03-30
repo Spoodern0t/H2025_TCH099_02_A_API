@@ -10,13 +10,18 @@
     $routeur->post('/index.php/inscription', function() {
         require_once './api/inscription.php';
     });
+
+    $routeur->get('index.php/test', function() {
+        echo 'Route test fonctionne';
+    });
+
     // Inscription d'un utilisateur
-    $routeur->post('/connexion', function(){
+    $routeur->post('/index.php/connexion', function(){
         require_once './api/connexion.php';
     });
 
     // Création d'une calendrier par un utilisateur
-    $routeur->post('/index.php/calendrier', function() {
+    $routeur->post('/calendrier', function() {
         require_once './api/calendrier.php';
 
         if(function_exists('postCalendrier')){

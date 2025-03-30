@@ -1,9 +1,9 @@
 <?php
-
-        $serverName = getenv('DB_SERVER');   
-        $dbname = getenv('DB_DATABASE');     
-        $username = getenv('DB_USERNAME');   
-        $password = getenv('DB_PASSWORD');
+    // Config de test
+        $host = '127.0.0.1';
+        $dbname = 'tch099_calendrier';
+        $username = 'root';
+        $password = '';
 
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -13,10 +13,9 @@
     
         try{
             $pdo = new PDO(
-                "sqlsrv:server=$serverName;Database=$dbname;Encrypt=1;TrustServerCertificate=0",
+                "mysql:host={$host};dbname={$dbname}",
                 $username,
-                $password, 
-                $options
+                $password
             );
         } catch (PDOException $e){
             echo "Erreur de connexion à " . $e->getMessage();
