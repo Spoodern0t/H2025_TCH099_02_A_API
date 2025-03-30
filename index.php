@@ -11,7 +11,7 @@
         require_once './api/inscription.php';
     });
 
-    $routeur->get('index.php/test', function() {
+    $routeur->get('/test', function() {
         echo 'Route test fonctionne';
     });
 
