@@ -2,6 +2,8 @@
 
     require_once 'Router.php';
     
+    $uri = $_SERVER['REQUEST_URI']; // Récupère l'URL demandée
+    echo $uri; // Vérifie si cela donne la bonne URL
 
     $routeur = new Router();
 
