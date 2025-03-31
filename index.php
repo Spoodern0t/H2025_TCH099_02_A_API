@@ -6,16 +6,16 @@
     $routeur = new Router();
 
     //Connexion d'un utilisateur
-    $routeur->post('/inscription', function() {
+    $routeur->post('/index.php/inscription', function() {
         require_once './api/inscription.php';
     });
 
-    $routeur->get('/test', function() {
+    $routeur->get('/index.php/test', function() {
         echo 'Route test fonctionne';
     });
 
     // Inscription d'un utilisateur
-    $routeur->post('/connexion', function(){
+    $routeur->post('/index.php/connexion', function(){
         require_once './api/connexion.php';
     });
 
