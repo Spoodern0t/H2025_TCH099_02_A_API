@@ -5,9 +5,8 @@
 
     $routeur = new Router();
 
-
     //Connexion d'un utilisateur
-    $routeur->post('/index.php/inscription', function() {
+    $routeur->post('/inscription', function() {
         require_once './api/inscription.php';
     });
 
@@ -16,7 +15,7 @@
     });
 
     // Inscription d'un utilisateur
-    $routeur->post('/index.php/connexion', function(){
+    $routeur->post('/connexion', function(){
         require_once './api/connexion.php';
     });
 
