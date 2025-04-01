@@ -1,19 +1,12 @@
 <?php
 
     require_once 'Router.php';
-    
-    $uri = $_SERVER['REQUEST_URI']; // Récupère l'URL demandée
-    echo $uri; // Vérifie si cela donne la bonne URL
 
     $routeur = new Router();
 
     //Connexion d'un utilisateur
-    $routeur->post('/inscription', function() {
+    $routeur->post('/index.php/inscription', function() {
         require_once './api/inscription.php';
-    });
-
-    $routeur->get('/index.php/test', function() {
-        echo 'Route test fonctionne';
     });
 
     // Inscription d'un utilisateur
@@ -21,29 +14,31 @@
         require_once './api/connexion.php';
     });
 
-    // Création d'une calendrier par un utilisateur
-    $routeur->post('/calendrier', function() {
+    $routeur->delete('/index.php/deconnexion', function(){
+        require_once './api/deconnexion.php';
+    });
+
+    
+    $routeur->get('/index.php/usercalendars/{token}', function($token){
+        require_once "./api/calendrier.php";
+
+        if(function_exists('getCalendrier')){
+            getCalendrier($token);
+        } else {
+            echo json_encode(["token" => false]);
+        }
+    });
+
+    $routeur->post('/index.php/calendrier/{calendrier_id}/token/{token}', function($id_calendrier, $token) {
         require_once './api/calendrier.php';
 
-        if(function_exists('postCalendrier')){
-            postCalendrier();
+        if(function_exists('getCalendrierUtilisateur')){
+            getCalendrierUtilisateur($id_calendrier, $token);
         } else {
             echo json_encode (['token' => false]);
         }
 
     });
-
-    // Récupération des calendriers relié a un utilisateur
-    $routeur->get('/index.php/calendriers', function() {
-        require_once './api/calendrier.php';
-
-        if(function_exists('getCalendrier')){
-            getCalendrier();
-        } else
-            echo json_encode (['token' => false]);
-
-    });
-
 
     $routeur->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 ?>
