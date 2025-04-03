@@ -40,10 +40,8 @@
 
             $idUtilisateur = $pdo->lastInsertId();
 
-            var_dump("allo");
             $stmt2 = $pdo->prepare("INSERT INTO Calendrier (nom, auteur_id) VALUES (?, ?)");
             $stmt2->execute([$nomUtilisateur, $idUtilisateur]);
-            var_dump("allo");
 
             $idCalendrier = $pdo->lastInsertId();
 
