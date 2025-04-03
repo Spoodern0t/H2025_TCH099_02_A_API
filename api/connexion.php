@@ -8,6 +8,10 @@
 
     $data = json_decode(file_get_contents("php://input"), true);
 
+    if (!isset($pdo)) {
+        die(json_encode(["error" => "Erreur de connexion à la base de données"]));
+    }
+
     // Verifier si les données ont été bien décoder
     if(json_last_error() !== JSON_ERROR_NONE){
         http_response_code(400);

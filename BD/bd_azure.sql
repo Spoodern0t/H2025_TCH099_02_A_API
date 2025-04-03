@@ -60,7 +60,6 @@ CREATE TABLE Utilisateur_Calendrier (
     id_calendrier   INT NOT NULL,
     est_membre      bit NOT NULL,
     invitation_acceptee bit DEFAULT 0,
-    url_invitation VARCHAR(255) UNIQUE,
 
     CONSTRAINT fk_cu_user     FOREIGN KEY (id_utilisateur)REFERENCES Utilisateur(id_utilisateur),
     CONSTRAINT fk_cu_calendar FOREIGN KEY (id_calendrier) REFERENCES Calendrier(id_calendrier)
