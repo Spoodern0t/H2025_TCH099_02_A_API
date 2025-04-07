@@ -29,7 +29,7 @@
         }
     });
 
-    $routeur->post('/index.php/calendrier/{calendrier_id}/token/{token}', function($id_calendrier, $token) {
+    $routeur->get('/index.php/calendrier/{calendrier_id}/token/{token}', function($id_calendrier, $token) {
         require_once './api/calendrier.php';
 
         if(function_exists('getCalendrierUtilisateur')){

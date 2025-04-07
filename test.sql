@@ -1,7 +1,13 @@
-INSERT INTO Utilisateur (nom, courriel, mot_de_passe) VALUES
-    ("Vincent", "exemple@gmail.com", "$2y$10$/wOTwuZg5CxHUTwiOS/qFuFFo0qy2rGUEjPWa4p0G0zuQ8bNZAOiC"),    -- Mot de passe de base : Chien123
-    ("Mathis", "Mathis@gmail.com", "$2y$10$FyOA.G6rkCS9s3AeULthye71QZATd3Glm6oyVl0Sm0aDjoAi9UDuK"),      -- Mot de passe de base : ETS2024
-    ("Jimmy", "Jimmy@gmail.com", "$2y$10$wf/0PGzYnHo4rPBR8te0HOVhUQLjsC0GDBlqWGhqQIxcylykBOLkS");        -- Mot de passe de base : ELECCESTMIEUX
--- Les idee calendrier pour sest utilisateur sont fictif. C'est à dire qu'il n'ont pas de lien entre un calendrier.
--- ils sont seulement utilisés pour tester la connexion.
+INSERT INTO Evenement (id_evenement, id_calendrier, nom, description, couleur)
+VALUES
+    (1, 4, 'Réunion projet', 'Discussion sur l’avancement du projet', 'FF0000'),
+    (2, 4, 'Anniversaire', 'Anniversaire de Sarah', '00FF00'),
+    (3, 4, 'Présentation client', 'Présentation des résultats', '0000FF');
+
+INSERT INTO Element (id_evenement, id_calendrier, id_element, nom, description, date_debut, date_fin)
+VALUES
+    (1, 4, 1, 'Préparation slides', 'Faire les slides de la réunion', '2025-04-10', '2025-04-10'),
+    (1, 4, 2, 'Réserver salle', 'Réservation de la salle A', '2025-04-09', '2025-04-09'),
+    (2, 4, 3, 'Acheter gâteau', 'Commander le gâteau au chocolat', '2025-04-12', '2025-04-12'),
+    (3, 4, 4, 'Répétition', 'Préparer la présentation client', '2025-04-14', '2025-04-14');
 
