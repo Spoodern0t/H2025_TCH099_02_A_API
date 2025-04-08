@@ -1,6 +1,6 @@
 <?php
 
-    include(__DIR__ . '/../config.php');
+    include(__DIR__ . '/../../config.php');
     header('Content-Type: application/json');
 
     use Firebase\JWT\JWT;
