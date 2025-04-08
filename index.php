@@ -59,6 +59,20 @@
         }
     });
 
+    $routeur->delete('/index.php/calendrier/{calendrier_id}', function($id_calendrier){
+        require_once './api/calendrier.php';
+
+        if(function_exists('supprimerCalendrier')){
+            supprimerCalendrier($id_calendrier);
+        } else {
+            echo json_encode(["token" => false]);
+        }
+    });
+
+
+
+
+
     $routeur->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
     
 ?>

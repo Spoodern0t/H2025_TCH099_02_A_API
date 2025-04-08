@@ -129,8 +129,60 @@
             echo json_encode(["token" => false]);
             return;
         }
-        echo $id_utilisateur;
 
+        try{
+            $pdo->beginTransaction();
+
+            $stmt = $pdo->prepare("UPDATE Calendrier SET nom = ?, description = ? WHERE id_calendrier = ?");
+            $stmt->execute([$nom_calendrier, $description, $id_calendrier]);
+            $new_calendrier = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $pdo->commit();
+            http_response_code(200);
+
+        } catch( \Trowable $e){
+            $pdo->rollBack();
+            echo json_encode(["token" => false]);
+        }
+    }
+
+    // TODO revoir la suppression avec mes coequipiers.
+    function supprimerCalendrier($id_calendrier){
+        include(__DIR__ . '/../config.php');
+        header('Content-type: application/json');
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        $token = $data['token']; 
+        $id_utilisateur = verifierToken($token);
+        
+        if(!$id_utilisateur){
+            echo json_encode(["token" => false]);
+            return;
+        }
+
+        $stmt = $pdo->prepare("SELECT auteur_id FROM Calendrier WHERE id_calendrier = ?");
+        $stmt->execute([$id_calendrier]);
+        $id_auteur = $stmt->fetchColumn();
+
+        try {
+            $pdo->beginTransaction();
+
+
+            $stmt = $pdo->prepare("DELETE FROM Utilisateur_Calendrier WHERE id_calendrier = ? AND id_utilisateur = ?");
+            $stmt->execute([$id_calendrier, $id_utilisateur]);
+
+            if($id_auteur === $id_utilisateur){
+                $stmt = $pdo->prepare("DELETE FROM Calendrier WHERE id_calendrier = ?");
+                $stmt->execute([$id_calendrier]);
+            }
+
+            $pdo->commit();
+            http_response_code(200);
+            
+        } catch(\Throwable $e){
+            $pdo->rollBack();
+            echo json_encode(["token" => false]);
+        }
     }
 
     function creerVue(){
