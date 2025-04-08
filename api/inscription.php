@@ -52,13 +52,9 @@
 
             $id_Calendrier = $calendrier['id_calendrier'];
 
-            try {
-                $stmt = $pdo->prepare("INSERT INTO Utilisateur_Calendrier (id_utilisateur, id_calendrier, est_membre) VALUES (?, ?, ?)");
-                $stmt->execute([$id_Utilisateur, $id_Calendrier, 1]);
-            } catch (PDOException $e) {
-                echo "Erreur d'insertion : " . $e->getMessage();
-            }
-
+            $stmt = $pdo->prepare("INSERT INTO Utilisateur_Calendrier (id_utilisateur, id_calendrier, est_membre) VALUES (?, ?, ?)");
+            $stmt->execute([$id_Utilisateur, $id_Calendrier, 1]);
+            
             $pdo->commit();
             http_response_code(200);
 

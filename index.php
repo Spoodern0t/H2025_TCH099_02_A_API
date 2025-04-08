@@ -18,7 +18,16 @@
         require_once './api/deconnexion.php';
     });
 
-    
+    $routeur->post('/index.php/calendrier', function() {
+        require_once './api/calendrier.php';
+
+        if(function_exists('creerCalendrier')){
+            creerCalendrier();
+        } else {
+            echo json_encode(["token" => false]);
+        }
+    });
+
     $routeur->get('/index.php/usercalendars/{token}', function($token){
         require_once "./api/calendrier.php";
 
@@ -29,7 +38,7 @@
         }
     });
 
-    $routeur->post('/index.php/calendrier/{calendrier_id}/token/{token}', function($id_calendrier, $token) {
+    $routeur->get('/index.php/calendrier/{calendrier_id}/token/{token}', function($id_calendrier, $token) {
         require_once './api/calendrier.php';
 
         if(function_exists('getCalendrierUtilisateur')){
@@ -38,6 +47,16 @@
             echo json_encode (['token' => false]);
         }
 
+    });
+
+    $routeur->put('/index.php/calendrier/{calendrier_id}', function($id_calendrier){
+        require_once './api/calendrier.php';
+
+        if(function_exists('modifierCalendrier')){
+            modifierCalendrier($id_calendrier);
+        } else {
+            echo json_encode(["token" => false]);
+        }
     });
 
     $routeur->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);

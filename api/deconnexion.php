@@ -25,8 +25,6 @@
 
     $stmt = $pdo-> prepare("DELETE FROM Connexion WHERE token = ?");
     $stmt-> execute([$token]);
-
-    // COmment savoir que la ligne ai bien été supprimer avant de renvoyer une réponse positive ou négative
     
     if($stmt->rowCount() > 0){
         http_response_code(200);
