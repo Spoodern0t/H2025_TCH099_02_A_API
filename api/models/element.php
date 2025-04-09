@@ -42,28 +42,27 @@
                 $info_evenement = [];
 
                 if($id_evenement != null){
-                    $stmt = $pdo->prepare("SELECT nom, description, couleur FROM Evenement WHERE id_evenement = ?");
+                    $stmt = $pdo->prepare("SELECT id_evenement, nom, description, couleur FROM Evenement WHERE id_evenement = ?");
                     $stmt->execute([$id_evenement]);
                     $info_evenement = $stmt->fetch(PDO::FETCH_ASSOC);
                 } else {
                     $info_evenement = null;
                 }
 
+                $pdo->commit();
                 echo json_encode
                     ([
-                        "id" => $info_element['id_element'],
-                        "calendrierId" => $id_calendrier,
+                        "id" => (int)$info_element['id_element'],
+                        "calendrierId" => (int)$id_calendrier,
                         "nom" => $nom,
                         "description" => $description,
                         "evenement" =>  $info_evenement,
                         "dateDebut" => $info_element['date_debut'],
                         "dateFin" => $info_element['date_fin']
                     ]);
-
-                $pdo->commit();
             }catch(\Throwable $e){
                 $pdo->rollback();
-                echo json_encode(["token" => "Le probleme " . $e->getMessage()]);
+                echo json_encode(["token" => false]);
             }
 
         }
@@ -73,7 +72,43 @@
             $data = json_decode(file_get_contents("php://input"), true);
             $pdo = $this->global->getPdo();
 
+            // Je pense pas que j'ai besoin $id_calendrier ou $id_evenement
+
+            $token = $data['token'];
+            $id_calendrier = $data['calendrierId'];
+            $nom = $data['nom'];
+            $description = $data['description'];
+            $id_evenement = $data['id_evenement'];
+            $date_debut = $data['dateDebut'];
+            $date_fin = $data['dateFin'];
+
+            $id_utilisateur = $this->global->verifierToken($token);
+            if(!$id_utilisateur){
+                echo json_encode(["token" => false]);
+                return;
+            }
+            
+            try{
+                $pdo->beginTransaction();
+
+                $stmt = $pdo->prepare("UPDATE Element SET nom = ?, description = ?, date_debut = ?, date_fin = ? WHERE id_element = ?");
+                $stmt->execute([$nom, $description, $date_debut, $date_fin, $id_element]);
+
+                $pdo->commit();
+                http_response_code(200);
+            } catch(\Throwable $e){
+                $pdo->rollback();
+                echo json_encode(["token" => false]);
+            }
+        }
+
+        function supprimerElement($id_element){
+            header('Content-type: application/json');
+            $data = json_decode(file_get_contents("php://input"), true);
+            $pdo = $this->global->getPdo();
+
             echo $id_element;
+
         }
     }
 

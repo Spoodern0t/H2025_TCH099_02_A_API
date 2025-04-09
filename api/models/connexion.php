@@ -58,11 +58,8 @@
                     $stmt->execute([$utilisateur['id_utilisateur']]);
                     $info_calendrier = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    foreach ($info_calendrier as &$row) {
-                        $row['id_utilisateur'] = (int)$row['id_utilisateur'];
-                        $row['id_calendrier'] = (int)$row['id_calendrier'];
-                        $row['est_membre'] = ($row['est_membre'] == 1) ? true : false;
-                    }
+                    
+                    $this->global->transformCalendrierInfo($info_calendrier);
 
                     $this->global->creerVue();
 

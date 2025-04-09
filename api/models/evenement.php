@@ -41,8 +41,8 @@
             $pdo->commit();
             echo json_encode
             ([
-                "id" => $info_evenement['id_evenement'],
-                "calendrierId" => $id_calendrier,
+                "id" => (int)$info_evenement['id_evenement'],
+                "calendrierId" => (int)$id_calendrier,
                 "titre" => $info_evenement['nom'],
                 "description" => $info_evenement['description'],
                 "couleur" => $info_evenement['couleur']

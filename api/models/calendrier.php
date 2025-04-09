@@ -29,6 +29,8 @@
             $stmt->execute([$id_utilisateur]);
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+            $this->global->transformCalendrierInfo($results);
+
             echo json_encode(["userCalendars" => $results]);
         }
 
@@ -49,13 +51,19 @@
             $stmt->execute([$id_utilisateur, $id_calendrier]);
             $user_information = $stmt->fetch(PDO::FETCH_ASSOC);
 
+            $this->global->transformCalendrierInfo($user_information);
+
             $stmt = $pdo->prepare("SELECT * FROM Evenement WHERE id_calendrier = ?");
             $stmt->execute([$id_calendrier]);
             $user_evenement = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+            $this->global->transformCalendrierInfo($user_evenement);
+
             $stmt = $pdo->prepare("SELECT * FROM Element WHERE id_calendrier = ?");
             $stmt->execute([$id_calendrier]);
             $user_element = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $this->global->transformCalendrierInfo($user_element);
 
             echo json_encode
             ([
@@ -107,7 +115,7 @@
                 $evenements = [];
                 echo json_encode
                 ([
-                    "id" => $id_calendrier,
+                    "id" => (int)$id_calendrier,
                     "nom" => $nom,
                     "description" => $description,
                     "auteur" => $nom_utilisateur["nom"],

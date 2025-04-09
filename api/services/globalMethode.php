@@ -46,6 +46,30 @@
             $stmt->execute();
         }
 
+        function transformCalendrierInfo(&$info_calendrier) {
+            foreach ($info_calendrier as &$row) {
+                if (isset($row['id_utilisateur'])) {
+                    $row['id_utilisateur'] = (int)$row['id_utilisateur'];
+                }
+        
+                if (isset($row['id_calendrier'])) {
+                    $row['id_calendrier'] = (int)$row['id_calendrier'];
+                }
+        
+                if (isset($row['id_evenement'])) {
+                    $row['id_evenement'] = (int)$row['id_evenement'];
+                }
+        
+                if (isset($row['id_element'])) {
+                    $row['id_element'] = (int)$row['id_element'];
+                }
+        
+                if (isset($row['est_membre'])) {
+                    $row['est_membre'] = ($row['est_membre'] == 1) ? true : false;
+                }
+            }
+        }
+
     }
 
 ?>

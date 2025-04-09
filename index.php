@@ -171,8 +171,18 @@
         } else {
             echo json_encode(["token" => false]);
         }
+    });
 
+    $routeur->delete('/index.php/element/{$id_element}', function($id_element){
+        require_once './api/models/element.php';
 
+        $element = new Element();
+        
+        if(method_exists($element, 'supprimerElement')){
+            $element->supprimerElement($id_element);
+        } else {
+            echo json_encode(["token" => false]);
+        }
     });
 
 
