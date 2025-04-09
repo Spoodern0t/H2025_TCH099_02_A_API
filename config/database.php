@@ -12,15 +12,15 @@
                     * 2) Le deuxieme est utiliser pour la bd azure
                     */
 
-                        // self::$pdo = new PDO(
-                        //     "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME,
-                        //     DB_USER,
-                        //     DB_PASSWORD,
-
                         self::$pdo = new PDO(
-                            "sqlsrv:server=tcp:mysqlserverv1.database.windows.net,1433;Database=" . DB_NAME,
+                            "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME,
                             DB_USER,
                             DB_PASSWORD,
+
+                        // self::$pdo = new PDO(
+                        //     "sqlsrv:server=tcp:mysqlserverv1.database.windows.net,1433;Database=" . DB_NAME,
+                        //     DB_USER,
+                        //     DB_PASSWORD,
 
                         [
                             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

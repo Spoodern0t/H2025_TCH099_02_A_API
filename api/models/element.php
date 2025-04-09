@@ -91,8 +91,8 @@
             try{
                 $pdo->beginTransaction();
 
-                $stmt = $pdo->prepare("UPDATE Element SET nom = ?, description = ?, date_debut = ?, date_fin = ? WHERE id_element = ?");
-                $stmt->execute([$nom, $description, $date_debut, $date_fin, $id_element]);
+                $stmt = $pdo->prepare("UPDATE Element SET nom = ?, description = ?, date_debut = ?, date_fin = ? WHERE id_element = ? AND id_calendrier = ?");
+                $stmt->execute([$nom, $description, $date_debut, $date_fin, $id_element, $id_calendrier]);
 
                 $pdo->commit();
                 http_response_code(200);
@@ -107,7 +107,27 @@
             $data = json_decode(file_get_contents("php://input"), true);
             $pdo = $this->global->getPdo();
 
-            echo $id_element;
+            $token = $data['token'];
+            $id_calendrier = $data['calendrierId'];
+
+            $id_utilisateur = $this->global->verifierToken($token);
+            if(!$id_utilisateur){
+                echo json_encode(["token" => false]);
+                return;
+            }
+
+            try{
+                $pdo->beginTransaction();
+
+                $stmt = $pdo->prepare("DELETE FROM Element WHERE id_element = ? AND id_calendrier = ?");
+                $stmt->execute([$id_element, $id_calendrier]);
+
+                $pdo->commit();
+                http_response_code(200);
+            }catch(\Throwable $e){
+                $pdo->rollback();
+                echo json_encode(["token" => false]);
+            }
 
         }
     }

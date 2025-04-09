@@ -59,7 +59,7 @@
         header('Content-type: application/json');
         $data = json_decode(file_get_contents("php://input"), true);
         $pdo = $this->global->getPdo();
-
+        
         $token = $data['token'];
         $titre = $data['titre'];
         $description = $data['description'];
