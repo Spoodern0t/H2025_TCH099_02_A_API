@@ -146,6 +146,21 @@
         }
     });
 
+    /*
+    * "Toutes les routes qui agissent en rapport avec les evemenents" 
+    */
+    $routeur->post('/index.php/calendrier/{id}/element', function($id_calendrier){
+        require_once './api/models/element.php';
+
+        $element = new Element();
+
+        if(method_exists($element, 'creerElement')){
+            $element->creerElement($id_calendrier);
+        } else {
+            json_encode(["token" => false]);
+        }
+    });
+
 
     $routeur->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
     

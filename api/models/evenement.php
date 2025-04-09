@@ -10,15 +10,11 @@
             $this->global = new GlobalMethode();
         }
 
-    
-
     //TODO Requetes modifier parler avec mes coequipiers
     // A completer
     function creerEvenement($id_calendrier){
         header('Content-type: application/json');
-
         $data = json_decode(file_get_contents("php://input"), true);
-
         $pdo = $this->global->getPdo();
 
         $token = $data['token'];
