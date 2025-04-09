@@ -31,9 +31,16 @@
     });
 
     // Déconnexion d'un utilisateur
-    // Todo À REFAIE avec la nouvelle méthode.
     $routeur->delete('/index.php/deconnexion', function(){
         require_once './api/models/deconnexion.php';
+
+        $deconnexion = new Deconnexion();
+
+        if(method_exists($deconnexion,'deconnexion')){
+            $deconnexion->deconnexion();
+        } else {
+            echo json_encode(["token" => false]);
+        }
     });
 
     /*
@@ -112,6 +119,30 @@
             $evenement->creerEvenement($id_calendrier);
         } else {
             echo json_encode(["token" => false]);
+        }
+    });
+
+    $routeur->put('/index.php/evenement/{id_evenement}', function($id_evenement) {
+        require_once './api/models/evenement.php';
+
+        $evenement = new Evenement();
+
+        if(method_exists($evenement,'modifierEvenement')){
+            $evenement->modifierEvenement($id_evenement);
+        } else {
+            json_encode(["token" => false]);
+        }
+    });
+
+    $routeur->delete('/index.php/evenement/{id_evenement}', function($id_evenement) {
+        require_once './api/models/evenement.php';
+
+        $evenement = new Evenement();
+
+        if(method_exists($evenement,'supprimerEvenement')){
+            $evenement->supprimerEvenement($id_evenement);
+        } else {
+            json_encode(["token" => false]);
         }
     });
 

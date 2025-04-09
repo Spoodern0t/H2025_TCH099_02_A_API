@@ -144,12 +144,11 @@
 
                 $stmt = $pdo->prepare("UPDATE Calendrier SET nom = ?, description = ? WHERE id_calendrier = ?");
                 $stmt->execute([$nom_calendrier, $description, $id_calendrier]);
-                $new_calendrier = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 $pdo->commit();
                 http_response_code(200);
 
-            } catch( \Trowable $e){
+            } catch(\Throwable $e){
                 $pdo->rollBack();
                 echo json_encode(["token" => false]);
             }
