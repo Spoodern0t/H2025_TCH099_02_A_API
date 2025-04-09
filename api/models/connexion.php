@@ -54,10 +54,15 @@
 
                     $token = JWT::encode($payload, $key, 'HS256');
 
-                    $stmt = $pdo->prepare("SELECT id_utilisateur, id_calendrier, nom_utilisateur, est_membre
-                        FROM Vue_utilisateur_Calendrier WHERE id_utilisateur = ?");
+                    $stmt = $pdo->prepare("SELECT id_utilisateur, id_calendrier, nom_utilisateur, est_membre FROM Vue_utilisateur_Calendrier WHERE id_utilisateur = ?");
                     $stmt->execute([$utilisateur['id_utilisateur']]);
                     $info_calendrier = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    foreach ($info_calendrier as &$row) {
+                        $row['id_utilisateur'] = (int)$row['id_utilisateur'];
+                        $row['id_calendrier'] = (int)$row['id_calendrier'];
+                        $row['est_membre'] = ($row['est_membre'] == 1) ? true : false;
+                    }
 
                     $this->global->creerVue();
 
