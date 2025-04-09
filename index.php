@@ -157,8 +157,22 @@
         if(method_exists($element, 'creerElement')){
             $element->creerElement($id_calendrier);
         } else {
-            json_encode(["token" => false]);
+            echo json_encode(["token" => false]);
         }
+    });
+
+    $routeur->put('/index.php/element/{$id_element}', function($id_element){
+        require_once './api/models/element.php';
+
+        $element = new Element();
+
+        if(method_exists($element, 'modifierElement')){
+            $element->modifierElement($id_element);
+        } else {
+            echo json_encode(["token" => false]);
+        }
+
+
     });
 
 

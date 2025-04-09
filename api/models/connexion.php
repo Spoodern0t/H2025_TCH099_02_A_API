@@ -54,57 +54,34 @@
 
                     $token = JWT::encode($payload, $key, 'HS256');
 
-                    $stmt = $pdo->prepare("SELECT id_utilisateur, id_calendrier, est_membre FROM Utilisateur_Calendrier WHERE id_utilisateur = ?");
-                    $stmt-> execute([$utilisateur['id_utilisateur']]);
-                    $calendrierUser = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $stmt = $pdo->prepare("SELECT id_utilisateur, id_calendrier, nom_utilisateur, est_membre
+                        FROM Vue_utilisateur_Calendrier WHERE id_utilisateur = ?");
+                    $stmt->execute([$utilisateur['id_utilisateur']]);
+                    $info_calendrier = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    $idCalendrierUser = array_column($calendrierUser, 'id_calendrier');
-                    $placeholders = count($idCalendrierUser) > 1 ? str_repeat('?,', count($idCalendrierUser) - 1). '?' : '?';
+                    $this->global->creerVue();
 
-                    $stmt = $pdo->prepare("SELECT auteur_id FROM Calendrier WHERE id_calendrier IN ($placeholders)");
-                    $stmt->execute($idCalendrierUser);
-                    $searchAuthor = $stmt->fetchAll(PDO:: FETCH_ASSOC);
-
-                    $idSearchAuthor = array_column($searchAuthor, 'auteur_id');
-                    $placeholders2 = count($idSearchAuthor) > 1 ? str_repeat('?,', count($idSearchAuthor) - 1). '?' : '?';
-
-                    $stmt = $pdo->prepare("SELECT nom FROM Utilisateur WHERE id_utilisateur IN ($placeholders2)");
-                    $stmt->execute($idSearchAuthor);
-                    $nomAuteur = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                    $userCalendars = [];
-
-                    $compteur = 0;
-                    foreach($calendrierUser as $calendrier){
-                        $userCalendars = [
-                            "id_utilisateur" => $calendrier["id_utilisateur"],
-                            "id_calendrier" => $calendrier["id_calendrier"],
-                            "auteur" => $nomAuteur[$compteur]['nom'],
-                            "est_membre" => (bool) $calendrier["est_membre"]
-                        ];
-                        $compteur++;
-                    }
-
-                    try{
+                    try {
                         $pdo->beginTransaction();
 
-                        $stmt = $pdo->prepare("INSERT INTO connexion (token, id_utilisateur) VALUES (?, ?)");
-                        $stmt-> execute([$token, $utilisateur["id_utilisateur"]]);
+                        $stmt = $pdo->prepare("INSERT INTO Connexion (token, id_utilisateur) VALUES (?, ?)");
+                        $stmt->execute([$token, $utilisateur['id_utilisateur']]);
 
                         $pdo->commit();
+
+                        echo json_encode
+                        ([
+                            "email" => $courriel,
+                            "username" => $utilisateur["nom"],
+                            "token" => $token,
+                            "userCalendars" => $info_calendrier
+                        ]);
+
                     } catch (\Throwable $e){
                         $pdo->rollBack();
+                        echo $e->getMessage();
                         echo json_encode(["token" => false]);
                     }
-
-                    echo json_encode
-                    ([
-                        "email" => $courriel,
-                        "username" => $utilisateur['nom'],
-                        "token" => $token,
-                        "userCalendars" => $userCalendars
-                        
-                    ]);
 
                 } else {
                     echo json_encode(["token" => false]); 
@@ -113,6 +90,8 @@
                 echo json_encode(["token" => false]);
             }
         }
+
+        
     }
 
 

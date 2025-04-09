@@ -23,7 +23,7 @@
                 return;
             }
 
-            $this->creerVue();
+            $this->global->creerVue();
 
             $stmt = $pdo->prepare("SELECT id_utilisateur, id_calendrier, nom_utilisateur, est_membre FROM Vue_Utilisateur_Calendrier WHERE id_utilisateur = ?");
             $stmt->execute([$id_utilisateur]);
@@ -36,7 +36,7 @@
             header('Content-type: application/json');
             $pdo = $this->global->getPdo();
 
-            $this->creerVue();
+            $this->global->creerVue();
 
             $id_utilisateur = $this->global->verifierToken($token);
 
@@ -192,30 +192,6 @@
                 $pdo->rollBack();
                 echo json_encode(["token" => false]);
             }
-        }
-
-        function creerVue(){
-            header('Content-type: application/json');
-
-            $pdo = $this->global->getPdo(); 
-
-            $pdo->exec("DROP VIEW IF EXISTS Vue_Utilisateur_Calendrier");
-            $stmt = $pdo->prepare(
-                "CREATE VIEW Vue_utilisateur_Calendrier AS SELECT
-                    Utilisateur.id_utilisateur,
-                    Calendrier.id_calendrier,
-                    Utilisateur.nom AS nom_utilisateur,
-                    Utilisateur_Calendrier.est_membre,
-                    Calendrier.nom AS nom_calendrier,
-                    Calendrier.description
-                FROM
-                    Utilisateur
-                INNER JOIN 
-                    Calendrier ON Utilisateur.id_utilisateur = Calendrier.auteur_id
-                INNER JOIN
-                    Utilisateur_Calendrier ON Calendrier.id_calendrier = Utilisateur_Calendrier.id_calendrier"
-            );
-            $stmt->execute();
         }
     }
 ?>
