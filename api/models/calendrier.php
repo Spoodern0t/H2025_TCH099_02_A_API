@@ -25,7 +25,7 @@
 
             $this->global->creerVue();
 
-            $stmt = $pdo->prepare("SELECT id_utilisateur, id_calendrier, nom_utilisateur, nom_calendrier, est_membre FROM Vue_Utilisateur_Calendrier WHERE id_utilisateur = ?");
+            $stmt = $pdo->prepare("SELECT id_utilisateur, id_calendrier, nom_utilisateur, nom_calendrier, est_membre, description FROM Vue_Utilisateur_Calendrier WHERE id_utilisateur = ?");
             $stmt->execute([$id_utilisateur]);
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
