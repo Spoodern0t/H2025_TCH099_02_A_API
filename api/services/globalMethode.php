@@ -1,5 +1,7 @@
 <?php
     require_once(__DIR__ . '/../../config/database.php');
+    use \Firebase\JWT\JWT;
+    use Firebase\JWT\Key;
 
     class GlobalMethode {
         private $pdo;
@@ -69,7 +71,28 @@
                 }
             }
         }
+        function verfierExpirationToken($token) {
+            header('Content-Type: application/json');
 
+            try{
+
+                $decode = JWT::decode($token, new Key(constant('CLE_SECRETE'), 'HS256'));
+                
+                return
+                [
+                    "status" => true,
+                    "message" => "Token valide",
+                    "utilisateur" => $decode->id_utilisateur ?? null,
+                    "exp" => $decode->exp ?? null
+                ];
+
+            } catch(\Firebase\JWT\ExpiredException $e) {
+                return ["status" => false, "message" => "token expiré"];
+            } catch(Exception $e){
+                return ["status" => false, "message" => "token invalide"];
+            }
+
+        }
     }
 
 ?>

@@ -49,6 +49,7 @@
                     $payload = [
                         "id_utilisateur" => $utilisateur['id_utilisateur'],
                         "iat" => time(),
+                        // Expiration 30 minutes pour l'instant. Modifier a l'avenir
                         "exp" => time() + 1800
                     ];
 

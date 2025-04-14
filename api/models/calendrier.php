@@ -11,14 +11,28 @@
             $this->global = new GlobalMethode();
         }
 
+        // Fonction changer avec la nouvelle methode des tokens expirés
         function getCalendrier($token){
             header('Content-type: application/json');
 
             $pdo = $this->global->getPdo();
+            $id_utilisateur = null;
 
-            $id_utilisateur = $this->global->verifierToken($token);
+            $tab_token = $this->global->verfierExpirationToken($token);
 
-            if(!$id_utilisateur){
+            if($tab_token['status'] === false){
+                http_response_code(401);
+                echo json_encode
+                ([
+                   "message" => $tab_token['message'] 
+                ]);
+                return;
+
+            } else {
+                $id_utilisateur = $tab_token['utilisateur'];
+            }
+
+            if($id_utilisateur === null){
                 echo json_encode(["token" => false]);
                 return;
             }
