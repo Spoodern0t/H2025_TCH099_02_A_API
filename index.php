@@ -4,6 +4,11 @@
 
     $routeur = new Router();
 
+    // Vérifier un token 
+    $routeur->post('/index.php/token', function() {
+        require_once './api/models/verifier_token.php';
+    });
+
     //Connexion d'un utilisateur
     $routeur->post('/index.php/inscription', function() {
         require_once './api/models/inscription.php';

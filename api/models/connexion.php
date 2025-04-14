@@ -49,7 +49,7 @@
                     $payload = [
                         "id_utilisateur" => $utilisateur['id_utilisateur'],
                         "iat" => time(),
-                        "expiration" => time() + 1800
+                        "exp" => time() + 1800
                     ];
 
                     $token = JWT::encode($payload, $key, 'HS256');
