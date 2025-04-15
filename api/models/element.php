@@ -35,7 +35,10 @@
                 $stmt = $pdo->prepare("INSERT INTO Element (id_evenement, id_calendrier, nom, description, date_debut, date_fin) VALUES (?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$id_evenement, $id_calendrier, $nom, $description, $date_debut, $date_fin]);
 
-                $stmt = $pdo->prepare("SELECT * FROM Element WHERE id_calendrier = ? ORDER BY id_evenement DESC LIMIT 1");
+                // A enlever plus tard
+                //$stmt = $pdo->prepare("SELECT * FROM Element WHERE id_calendrier = ? ORDER BY id_evenement DESC LIMIT 1");
+
+                $stmt = $pdo->prepare("SELECT TOP 1 * FROM Element WHERE id_calendrier = ? ORDER BY id_evenement DESC");
                 $stmt->execute([$id_calendrier]);
                 $info_element = $stmt->fetch(PDO::FETCH_ASSOC);
 
