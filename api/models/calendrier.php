@@ -85,8 +85,8 @@
                 "nom" => $user_information["nom_calendrier"],
                 "description" => $user_information["description"],
                 "auteur" => $user_information["nom_utilisateur"],
-                "element" => $user_evenement,
-                "evenement" => $user_element
+                "evenement" => $user_evenement,
+                "element" => $user_element
             ]);
 
         }

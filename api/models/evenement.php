@@ -31,10 +31,16 @@
         try{
             $pdo->beginTransaction();
 
+            echo 'Test' . $titre . "," . $description . "," . $couleur . " et " . $id_calendrier;
             $stmt = $pdo->prepare("INSERT INTO Evenement (id_calendrier, nom, description, couleur) VALUES (?,?,?,?)");
             $stmt->execute([$id_calendrier, $titre, $description, $couleur]);
 
-            $stmt = $pdo->prepare("SELECT * FROM Evenement WHERE id_calendrier = ? ORDER BY id_evenement DESC LIMIT 1");
+            // Ligne pour locale pu va etre enlever 
+            //$stmt = $pdo->prepare("SELECT * FROM Evenement WHERE id_calendrier = ? ORDER BY id_evenement DESC LIMIT 1");
+            
+            // Ligne pour azure ashsadjkfhalskjdhfljkas
+            $stmt = $pdo->prepare("SELECT TOP 1 * FROM Evenement WHERE id_calendrier = ? ORDER BY id_evenement DESC");
+            
             $stmt->execute([$id_calendrier]);
             $info_evenement = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -50,7 +56,7 @@
 
         } catch(\Throwable $e){
             $pdo->rollback();
-            echo json_encode(["token" => false]);
+            echo json_encode(["token" => false, "message" => $e->getMessage()]);
         }
 
     }
