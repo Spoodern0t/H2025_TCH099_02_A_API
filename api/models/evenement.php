@@ -31,7 +31,6 @@
         try{
             $pdo->beginTransaction();
 
-            echo 'Test' . $titre . "," . $description . "," . $couleur . " et " . $id_calendrier;
             $stmt = $pdo->prepare("INSERT INTO Evenement (id_calendrier, nom, description, couleur) VALUES (?,?,?,?)");
             $stmt->execute([$id_calendrier, $titre, $description, $couleur]);
 
