@@ -54,12 +54,35 @@
 
             $this->global->creerVue();
 
+            // Nouvelle methode
+            $tab_token = $this->global->verfierExpirationToken($token);
+
+            if($tab_token['status'] === false){
+                http_response_code(401);
+                echo json_encode
+                ([
+                   "message" => $tab_token['message'] 
+                ]);
+                return;
+
+            } else {
+                $id_utilisateur = $tab_token['utilisateur'];
+            }
+
+            if($id_utilisateur === null){
+                echo json_encode(["token" => false]);
+                return;
+            }
+
+            // Ancienne méthode
+            /*
             $id_utilisateur = $this->global->verifierToken($token);
 
             if(!$id_utilisateur){
                 echo json_encode(["token" => false]);
                 return;
             }
+            */
 
             $stmt = $pdo->prepare("SELECT * FROM Vue_Utilisateur_Calendrier WHERE id_utilisateur = ? AND id_calendrier = ?");
             $stmt->execute([$id_utilisateur, $id_calendrier]);
@@ -101,12 +124,34 @@
             $nom = $data["nom"];
             $description = $data["description"];
 
+            // Nouvelle méthode
+            $tab_token = $this->global->verfierExpirationToken($token);
+
+            if($tab_token['status'] === false){
+                http_response_code(401);
+                echo json_encode
+                ([
+                   "message" => $tab_token['message'] 
+                ]);
+                return;
+
+            } else {
+                $id_utilisateur = $tab_token['utilisateur'];
+            }
+
+            if($id_utilisateur === null){
+                echo json_encode(["token" => false]);
+                return;
+            }
+
+            /*
             $id_utilisateur = $this->global->verifierToken($token);
 
             if(!$id_utilisateur){
                 echo json_encode(["token" => false]);
                 return;
             }
+            */
 
             try{
                 $pdo->beginTransaction();
@@ -154,12 +199,35 @@
             $nom_calendrier = $data["nom"];
             $description = $data["description"]; 
 
+            // Nouvelle méthode
+            $tab_token = $this->global->verfierExpirationToken($token);
+
+            if($tab_token['status'] === false){
+                http_response_code(401);
+                echo json_encode
+                ([
+                   "message" => $tab_token['message'] 
+                ]);
+                return;
+
+            } else {
+                $id_utilisateur = $tab_token['utilisateur'];
+            }
+
+            if($id_utilisateur === null){
+                echo json_encode(["token" => false]);
+                return;
+            }
+
+            // Ancienne méthode
+            /*
             $id_utilisateur = $this->global->verifierToken($token);
 
             if(!$id_utilisateur){
                 echo json_encode(["token" => false]);
                 return;
             }
+            */
 
             try{
                 $pdo->beginTransaction();
@@ -184,12 +252,35 @@
 
             $token = $data['token']; 
 
+            // Nouvelle méthode
+            $tab_token = $this->global->verfierExpirationToken($token);
+
+            if($tab_token['status'] === false){
+                http_response_code(401);
+                echo json_encode
+                ([
+                   "message" => $tab_token['message'] 
+                ]);
+                return;
+
+            } else {
+                $id_utilisateur = $tab_token['utilisateur'];
+            }
+
+            if($id_utilisateur === null){
+                echo json_encode(["token" => false]);
+                return;
+            }
+
+            // Ancienne méthode
+            /*
             $id_utilisateur = $this->global->verifierToken($token);
 
             if(!$id_utilisateur){
                 echo json_encode(["token" => false]);
                 return;
             }
+            */
 
             $stmt = $pdo->prepare("SELECT auteur_id FROM Calendrier WHERE id_calendrier = ?");
             $stmt->execute([$id_calendrier]);
