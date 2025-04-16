@@ -2,7 +2,15 @@
     require 'vendor/autoload.php';
     require './api/services/globalMethode.php';
     require './config/config.php';
+    // Php mail
+    require 'path/to/PHPMailer/src/Exception.php';
+    require 'path/to/PHPMailer/src/PHPMailer.php';
+    require 'path/to/PHPMailer/src/SMTP.php';
+    // Php mail
+
     use \Firebase\JWT\JWT;
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
 
     class Connexion{
         public $global;
@@ -39,6 +47,22 @@
             $stmt = $pdo->prepare("SELECT courriel, mot_de_passe, id_utilisateur, nom FROM Utilisateur WHERE courriel = ?");
             $stmt-> execute([$courriel]);
             $utilisateur = $stmt->fetch();
+
+            // Email : multus.calendrius.sender@gmail.com
+            // MDP : CalendrierETS2025
+
+            try{
+                $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+                $mail->isSMTP();                                            //Send using SMTP
+                $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+                $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+                $mail->Username   = 'multus.calendrius.sender@gmail.com';                     //SMTP username
+                $mail->Password   = 'CalendrierETS2025';                               //SMTP password
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+                $mail->Port       = 465; 
+            } catch(){
+
+            }
 
             // Verifier si les informations reçu sont les bonnes.
             // Envoie de JSON pour la verification bonne ou mouvaise.
