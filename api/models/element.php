@@ -29,6 +29,8 @@
                 return;
             }
 
+            var_dump($id_evenement);
+
             try{
                 $pdo->beginTransaction();
 
@@ -48,6 +50,7 @@
                     $stmt = $pdo->prepare("SELECT id_evenement, nom, description, couleur FROM Evenement WHERE id_evenement = ?");
                     $stmt->execute([$id_evenement]);
                     $info_evenement = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $info_evenement["id_evenement"] = (int) $info_evenement["id_evenement"];
                 } else {
                     $info_evenement = null;
                 }
