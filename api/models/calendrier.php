@@ -136,7 +136,8 @@
                     "nom" => $user_information["nom_calendrier"],
                     "description" => $user_information["description"],
                     "auteur" => $user_information["nom_utilisateur"],
-                    "element" => $elements
+                    "element" => $elements,
+                    "evenement" => $user_evenement
                 ]);       
         }
 
