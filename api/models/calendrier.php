@@ -108,8 +108,8 @@
 
             foreach($user_element as $row){
                 $element = [
-                    "id_calendrier" => $row["id_calendrier"],
-                    "id_element" => $row["id_element"],
+                    "id_calendrier" => (INT)$row["id_calendrier"],
+                    "id_element" => (INT)$row["id_element"],
                     "nom" => $row["nom"],
                     "description" => $row["description"],
                     "date_debut" => $row["date_debut"],
@@ -119,8 +119,8 @@
 
                 if(!empty($row["id_evenement"])){
                     $element["evenement"] = [
-                        "id_evenement"=> $row["id_ev_evenement"],
-                        "id_calendrier" => $row["id_ev_calendrier"],
+                        "id_evenement"=> (INT)$row["id_ev_evenement"],
+                        "id_calendrier" => (INT)$row["id_ev_calendrier"],
                         "nom" => $row["ev_nom"],
                         "description" => $row["ev_description"],
                         "couleur" => $row["couleur"]

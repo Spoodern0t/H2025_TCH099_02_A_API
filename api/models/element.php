@@ -20,8 +20,13 @@
             $nom = $data['nom'];
             $description = $data['description'];
             $id_evenement = $data['id_evenement'];
+            
             $date_debut = $data['dateDebut'];
+            $date_debut = new DateTime($date_debut);
+            $date_debut = $date_debut->format('Y-m-d H:i:s');
             $date_fin = $data['dateFin'];
+            $date_fin = new DateTime($date_fin);
+            $date_fin = $date_fin->format('Y-m-d H:i:s');
 
             // Nouvelle méthode
             $tab_token = $this->global->verfierExpirationToken($token);
@@ -108,8 +113,13 @@
             $nom = $data['nom'];
             $description = $data['description'];
             $id_evenement = $data['id_evenement'];
+
             $date_debut = $data['dateDebut'];
+            $date_debut = new DateTime($date_debut);
+            $date_debut = $date_debut->format('Y-m-d H:i:s');
             $date_fin = $data['dateFin'];
+            $date_fin = new DateTime($date_fin);
+            $date_fin = $date_fin->format('Y-m-d H:i:s');
 
             // Nouvelle methode
             $tab_token = $this->global->verfierExpirationToken($token);
