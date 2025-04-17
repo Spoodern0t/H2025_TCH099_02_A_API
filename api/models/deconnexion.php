@@ -26,8 +26,8 @@
             if(!is_array($data)){
                 echo json_encode(["token" => false]);
                 exit;
-            }   
-
+            }  
+            
             $token = $data['token'];
 
             $stmt = $pdo-> prepare("DELETE FROM Connexion WHERE token = ?");

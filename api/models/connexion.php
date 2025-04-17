@@ -2,6 +2,7 @@
     require 'vendor/autoload.php';
     require './api/services/globalMethode.php';
     require './config/config.php';
+
     use \Firebase\JWT\JWT;
 
     class Connexion{
@@ -49,8 +50,8 @@
                     $payload = [
                         "id_utilisateur" => $utilisateur['id_utilisateur'],
                         "iat" => time(),
-                        // Expiration 30 minutes pour l'instant. Modifier a l'avenir
-                        "exp" => time() + 1800
+                        // Expiration 24 heures pour l'instant. Modifier a l'avenir
+                        "exp" => time() + 86400  
                     ];
 
                     $token = JWT::encode($payload, $key, 'HS256');

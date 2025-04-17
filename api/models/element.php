@@ -23,11 +23,34 @@
             $date_debut = $data['dateDebut'];
             $date_fin = $data['dateFin'];
 
+            // Nouvelle méthode
+            $tab_token = $this->global->verfierExpirationToken($token);
+
+            if($tab_token['status'] === false){
+                http_response_code(401);
+                echo json_encode
+                ([
+                   "message" => $tab_token['message'] 
+                ]);
+                return;
+
+            } else {
+                $id_utilisateur = $tab_token['utilisateur'];
+            }
+
+            if($id_utilisateur === null){
+                echo json_encode(["token" => false]);
+                return;
+            }
+
+            // Ancienne méthode
+            /*
             $id_utilisateur = $this->global->verifierToken($token);
             if(!$id_utilisateur){
                 echo json_encode(["token" => false]);
                 return;
             }
+            */
 
             var_dump($id_evenement);
 
@@ -88,11 +111,34 @@
             $date_debut = $data['dateDebut'];
             $date_fin = $data['dateFin'];
 
+            // Nouvelle methode
+            $tab_token = $this->global->verfierExpirationToken($token);
+
+            if($tab_token['status'] === false){
+                http_response_code(401);
+                echo json_encode
+                ([
+                   "message" => $tab_token['message'] 
+                ]);
+                return;
+
+            } else {
+                $id_utilisateur = $tab_token['utilisateur'];
+            }
+
+            if($id_utilisateur === null){
+                echo json_encode(["token" => false]);
+                return;
+            }
+
+            // Ancienne methode
+            /*
             $id_utilisateur = $this->global->verifierToken($token);
             if(!$id_utilisateur){
                 echo json_encode(["token" => false]);
                 return;
             }
+            */
             
             try{
                 $pdo->beginTransaction();
@@ -116,11 +162,34 @@
             $token = $data['token'];
             $id_calendrier = $data['calendrierId'];
 
+            // Nouvelle méthode
+            $tab_token = $this->global->verfierExpirationToken($token);
+
+            if($tab_token['status'] === false){
+                http_response_code(401);
+                echo json_encode
+                ([
+                   "message" => $tab_token['message'] 
+                ]);
+                return;
+
+            } else {
+                $id_utilisateur = $tab_token['utilisateur'];
+            }
+
+            if($id_utilisateur === null){
+                echo json_encode(["token" => false]);
+                return;
+            }
+
+            // Ancienne méthode
+            /*
             $id_utilisateur = $this->global->verifierToken($token);
             if(!$id_utilisateur){
                 echo json_encode(["token" => false]);
                 return;
             }
+            */
 
             try{
                 $pdo->beginTransaction();

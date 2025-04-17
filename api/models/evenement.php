@@ -22,11 +22,34 @@
         $description = $data['description'];
         $couleur = $data['couleur'];
 
+        // Nouvelle méthode
+        $tab_token = $this->global->verfierExpirationToken($token);
+
+        if($tab_token['status'] === false){
+            http_response_code(401);
+            echo json_encode
+            ([
+               "message" => $tab_token['message'] 
+            ]);
+            return;
+
+        } else {
+            $id_utilisateur = $tab_token['utilisateur'];
+        }
+
+        if($id_utilisateur === null){
+            echo json_encode(["token" => false]);
+            return;
+        }
+
+        // Ancienne méthode
+        /*
         $id_utilisateur = $this->global->verifierToken($token);
         if(!$id_utilisateur){
             echo json_encode(["token" => false]);
             return;
         }
+        */
 
         try{
             $pdo->beginTransaction();
@@ -70,11 +93,34 @@
         $description = $data['description'];
         $couleur = $data['couleur'];
 
+        // Nouvelle méthode
+        $tab_token = $this->global->verfierExpirationToken($token);
+
+        if($tab_token['status'] === false){
+            http_response_code(401);
+            echo json_encode
+            ([
+               "message" => $tab_token['message'] 
+            ]);
+            return;
+
+        } else {
+            $id_utilisateur = $tab_token['utilisateur'];
+        }
+
+        if($id_utilisateur === null){
+            echo json_encode(["token" => false]);
+            return;
+        }
+
+        // Ancienne méthode
+        /*
         $id_utilisateur = $this->global->verifierToken($token);
         if(!$id_utilisateur){
             echo json_encode(["token" => false]);
             return;
         }
+        */
 
         try{
             $pdo->beginTransaction();
@@ -99,13 +145,42 @@
         $token = $data['token'];
         $id_calendrier = $data['calendrierId'];
 
+        // Nouvelle méthode
+        $tab_token = $this->global->verfierExpirationToken($token);
+
+        if($tab_token['status'] === false){
+            http_response_code(401);
+            echo json_encode
+            ([
+               "message" => $tab_token['message'] 
+            ]);
+            return;
+
+        } else {
+            $id_utilisateur = $tab_token['utilisateur'];
+        }
+
+        if($id_utilisateur === null){
+            echo json_encode(["token" => false]);
+            return;
+        }
+
+        // Ancienne méthode
+        /*
         $id_utilisateur = $this->global->verifierToken($token);
         if(!$id_utilisateur){
             echo json_encode(["token" => false]);
             return;
         }
+        */
+
+        var_dump($id_evenement);
+        var_dump($id_calendrier);
         try{
             $pdo->beginTransaction();
+
+            $stmt = $pdo->prepare("DELETE FROM Element WHERE id_evenement = ? AND id_calendrier = ?");
+            $stmt->execute([$id_evenement, $id_calendrier]);
 
             $stmt = $pdo->prepare("DELETE FROM Evenement WHERE id_evenement = ? AND id_calendrier = ?");
             $stmt->execute([$id_evenement, $id_calendrier]);
@@ -115,7 +190,7 @@
 
         }catch(\Throwable $e){
             $pdo->rollback();
-            echo json_encode(["token", false]);
+            echo json_encode(["token" => false, "message" => $e->getMessage()]);
         }
     }
 }
