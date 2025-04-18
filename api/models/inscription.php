@@ -11,6 +11,8 @@
     use PHPMailer\PHPMailer\Exception;
     use PHPMailer\PHPMailer\SMTP;
 
+    use \Firebase\JWT\JWT;
+
     class Inscription {
         public $global;
 
@@ -67,13 +69,18 @@
                     $payload = [
                         "email" => $courriel,
                         "iat" => time(),
-                        "ext"
+                        // Le token pour se connecter au email expire dans les 1 heures après sa création
+                        // donc l'utilisateur donc cliquer sur le lien avant les 1 heures sinon une autre token
+                        // sera créer et un autre email sera envoyer.
+                        "ext" => time() + 3600
                     ];
+
+                    $tokenEmail = JWT::encode($payload, $key, 'HS256');
 
                     $mail->isHTML(true);                                  //Set email format to HTML
                     $mail->Subject = 'Activation de votre email.';
                     $mail->Body    = '<p>Veuillez cliquez sur ce lien pour activez votre compte:</p>
-                                        <a href = ""> Activer votre compte!</a>';
+                                        <a href = "http://localhost/H2025_TCH099_02_A_API/index.php/valider-email/$tokenEmail"> http://localhost/H2025_TCH099_02_A_API/index.php/valider-email/$tokenEmail </a>';
 
                     $mail->send();
                 } catch(Exception $e){
