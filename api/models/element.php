@@ -112,8 +112,6 @@
             $data = json_decode(file_get_contents("php://input"), true);
             $pdo = $this->global->getPdo();
 
-            // Je pense pas que j'ai besoin $id_calendrier ou $id_evenement
-
             $token = $data['token'];
             $id_calendrier = $data['calendrierId'];
             $nom = $data['nom'];
@@ -125,7 +123,6 @@
                 $date_debut = new DateTime($date_debut);
                 $date_debut = $date_debut->format('Y-m-d H:i:s');
             }
-
             
             $date_fin = $data['dateFin'];
             if($date_fin != null){
@@ -161,18 +158,20 @@
                 return;
             }
             */
+
+            var_dump($id_evenement . ", " . $id_element . ", " . $id_calendrier);
             
             try{
                 $pdo->beginTransaction();
 
-                $stmt = $pdo->prepare("UPDATE Element SET nom = ?, description = ?, date_debut = ?, date_fin = ? WHERE id_element = ? AND id_calendrier = ?");
-                $stmt->execute([$nom, $description, $date_debut, $date_fin, $id_element, $id_calendrier]);
+                $stmt = $pdo->prepare("UPDATE Element SET nom = ?, description = ?, date_debut = ?, date_fin = ?, id_evenement = ? WHERE id_element = ? AND id_calendrier = ?");
+                $stmt->execute([$nom, $description, $date_debut, $date_fin, $id_evenement, $id_element, $id_calendrier]);
 
                 $pdo->commit();
                 http_response_code(200);
             } catch(\Throwable $e){
                 $pdo->rollback();
-                echo json_encode(["token" => false]);
+                echo json_encode(["token" => false, "message" => $e->getMessage()]);
             }
         }
 
