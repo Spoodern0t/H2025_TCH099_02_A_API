@@ -179,9 +179,6 @@
         try{
             $pdo->beginTransaction();
 
-            $stmt = $pdo->prepare("DELETE FROM Element WHERE id_evenement = ? AND id_calendrier = ?");
-            $stmt->execute([$id_evenement, $id_calendrier]);
-
             $stmt = $pdo->prepare("DELETE FROM Evenement WHERE id_evenement = ? AND id_calendrier = ?");
             $stmt->execute([$id_evenement, $id_calendrier]);
 
