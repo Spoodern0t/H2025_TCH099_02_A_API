@@ -9,6 +9,20 @@
         require_once './api/models/verifier_token.php';
     });
 
+    // Vérifier du email
+    $routeur->get('/index.php/valider-email/{token}', function($emailToken) {
+        require_once './api/models/verifier_token.php';
+
+        $token = new Token();
+
+        if(method_exists($token, 'verifierTokenEmail')) {
+             $token->verifierTokenEmail($emailToken);
+        } else {
+            echo json_encode(["token" => false]);
+        }
+
+    });
+
     //Connexion d'un utilisateur
     $routeur->post('/index.php/inscription', function() {
         require_once './api/models/inscription.php';

@@ -34,7 +34,13 @@
                 http_response_code(401);
                 echo json_encode(["message" => "token invalide"]);
             }
+        }
 
+        function verifierTokenEmail($tokenEmail){
+            header('Content-Type: application/json');
+            //$data = json_decode(file_get_contents("php://input"), true);
+
+            echo $tokenEmail;
         }
     }
 

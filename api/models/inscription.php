@@ -51,8 +51,9 @@
                 $MDPHache = password_hash($motDePasse, PASSWORD_DEFAULT);
 
                 $mail = new PHPMailer(true);
+                $key = constant('CLE_SECRETE');
                 try{
-                    //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+                    //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                    //Enable verbose debug output
                     $mail->isSMTP();                                            //Send using SMTP
                     $mail->Host       = 'smtp.gmail.com';                       //Set the SMTP server to send through
                     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
@@ -61,12 +62,18 @@
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
                     $mail->Port       = 465;
                     
-                    $mail->addAddress($courriel);  
+                    $mail->addAddress($courriel);
+                    
+                    $payload = [
+                        "email" => $courriel,
+                        "iat" => time(),
+                        "ext"
+                    ];
 
                     $mail->isHTML(true);                                  //Set email format to HTML
-                    $mail->Subject = 'Here is the subject';
-                    $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-                    $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+                    $mail->Subject = 'Activation de votre email.';
+                    $mail->Body    = '<p>Veuillez cliquez sur ce lien pour activez votre compte:</p>
+                                        <a href = ""> Activer votre compte!</a>';
 
                     $mail->send();
                 } catch(Exception $e){
