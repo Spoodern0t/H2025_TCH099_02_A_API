@@ -37,8 +37,6 @@
                 return;
             }
 
-            $this->global->creerVue();
-
             $stmt = $pdo->prepare("SELECT id_utilisateur, id_calendrier, nom_utilisateur, nom_calendrier, est_membre, description FROM Vue_Utilisateur_Calendrier WHERE id_utilisateur = ?");
             $stmt->execute([$id_utilisateur]);
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -51,8 +49,6 @@
         function getCalendrierUtilisateur($id_calendrier, $token){
             header('Content-type: application/json');
             $pdo = $this->global->getPdo();
-
-            $this->global->creerVue();
 
             // Nouvelle methode
             $tab_token = $this->global->verfierExpirationToken($token);
@@ -96,22 +92,53 @@
 
             $this->global->transformCalendrierInfo($user_evenement);
 
-            $stmt = $pdo->prepare("SELECT * FROM Element WHERE id_calendrier = ?");
+            $stmt = $pdo->prepare("SELECT el.*, 
+            ev.id_evenement AS id_ev_evenement,
+            ev.id_calendrier AS id_ev_calendrier,
+            ev.nom AS ev_nom,
+            ev.description AS ev_description,
+            ev.couleur 
+            FROM Element el LEFT JOIN Evenement ev ON ev.id_evenement = el.id_evenement WHERE el.id_calendrier = ?");
             $stmt->execute([$id_calendrier]);
             $user_element = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             $this->global->transformCalendrierInfo($user_element);
 
-            echo json_encode
-            ([
-                "id" => $user_information["id_calendrier"],
-                "nom" => $user_information["nom_calendrier"],
-                "description" => $user_information["description"],
-                "auteur" => $user_information["nom_utilisateur"],
-                "evenement" => $user_evenement,
-                "element" => $user_element
-            ]);
+            $elements = [];
 
+            foreach($user_element as $row){
+                $element = [
+                    "id_calendrier" => (INT)$row["id_calendrier"],
+                    "id_element" => (INT)$row["id_element"],
+                    "nom" => $row["nom"],
+                    "description" => $row["description"],
+                    "date_debut" => $row["date_debut"],
+                    "date_fin" => $row["date_fin"],
+                    "evenement" => null
+                ];
+
+                if(!empty($row["id_evenement"])){
+                    $element["evenement"] = [
+                        "id_evenement"=> (INT)$row["id_ev_evenement"],
+                        "id_calendrier" => (INT)$row["id_ev_calendrier"],
+                        "nom" => $row["ev_nom"],
+                        "description" => $row["ev_description"],
+                        "couleur" => $row["couleur"]
+                    ];
+                }
+
+                $elements[] = $element;
+            }
+
+                echo json_encode
+                ([
+                    "id" => $user_information["id_calendrier"],
+                    "nom" => $user_information["nom_calendrier"],
+                    "description" => $user_information["description"],
+                    "auteur" => $user_information["nom_utilisateur"],
+                    "element" => $elements,
+                    "evenement" => $user_evenement
+                ]);       
         }
 
         function creerCalendrier(){

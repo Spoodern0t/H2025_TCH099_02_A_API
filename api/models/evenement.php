@@ -174,6 +174,8 @@
         }
         */
 
+        var_dump($id_evenement);
+        var_dump($id_calendrier);
         try{
             $pdo->beginTransaction();
 
@@ -185,7 +187,7 @@
 
         }catch(\Throwable $e){
             $pdo->rollback();
-            echo json_encode(["token", false]);
+            echo json_encode(["token" => false, "message" => $e->getMessage()]);
         }
     }
 }
