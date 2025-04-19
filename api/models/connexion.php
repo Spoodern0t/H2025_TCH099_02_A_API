@@ -37,61 +37,65 @@
             $courriel = $data['email'];
             $motDePasse = $data['password'];
 
-            $stmt = $pdo->prepare("SELECT courriel, mot_de_passe, id_utilisateur, nom FROM Utilisateur WHERE courriel = ?");
+            $stmt = $pdo->prepare("SELECT courriel, mot_de_passe, id_utilisateur, nom, est_valide  FROM Utilisateur WHERE courriel = ?");
             $stmt-> execute([$courriel]);
             $utilisateur = $stmt->fetch();
 
             // Verifier si les informations reçu sont les bonnes.
             // Envoie de JSON pour la verification bonne ou mouvaise.
-            if($utilisateur){
-                if($utilisateur && password_verify($motDePasse, $utilisateur['mot_de_passe'])) {
-                    $key = constant('CLE_SECRETE');
+            if($utilisateur['est_valide']){
+                if($utilisateur){
+                    if($utilisateur && password_verify($motDePasse, $utilisateur['mot_de_passe'])) {
+                        $key = constant('CLE_SECRETE');
 
-                    $payload = [
-                        "id_utilisateur" => $utilisateur['id_utilisateur'],
-                        "iat" => time(),
-                        // Expiration 24 heures pour l'instant. Modifier a l'avenir
-                        "exp" => time() + 86400  
-                    ];
+                        $payload = [
+                            "id_utilisateur" => $utilisateur['id_utilisateur'],
+                            "iat" => time(),
+                            // Expiration 24 heures pour l'instant. Modifier a l'avenir
+                            "exp" => time() + 86400  
+                        ];
 
-                    $token = JWT::encode($payload, $key, 'HS256');
+                        $token = JWT::encode($payload, $key, 'HS256');
 
-                    $stmt = $pdo->prepare("SELECT id_utilisateur, id_calendrier, nom_utilisateur, est_membre FROM Vue_utilisateur_Calendrier WHERE id_utilisateur = ?");
-                    $stmt->execute([$utilisateur['id_utilisateur']]);
-                    $info_calendrier = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        $stmt = $pdo->prepare("SELECT id_utilisateur, id_calendrier, nom_utilisateur, est_membre FROM Vue_utilisateur_Calendrier WHERE id_utilisateur = ?");
+                        $stmt->execute([$utilisateur['id_utilisateur']]);
+                        $info_calendrier = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    
-                    $this->global->transformCalendrierInfo($info_calendrier);
+                        
+                        $this->global->transformCalendrierInfo($info_calendrier);
 
-                    $this->global->creerVue();
+                        $this->global->creerVue();
 
-                    try {
-                        $pdo->beginTransaction();
+                        try {
+                            $pdo->beginTransaction();
 
-                        $stmt = $pdo->prepare("INSERT INTO Connexion (token, id_utilisateur) VALUES (?, ?)");
-                        $stmt->execute([$token, $utilisateur['id_utilisateur']]);
+                            $stmt = $pdo->prepare("INSERT INTO Connexion (token, id_utilisateur) VALUES (?, ?)");
+                            $stmt->execute([$token, $utilisateur['id_utilisateur']]);
 
-                        $pdo->commit();
+                            $pdo->commit();
 
-                        echo json_encode
-                        ([
-                            "email" => $courriel,
-                            "username" => $utilisateur["nom"],
-                            "token" => $token,
-                            "userCalendars" => $info_calendrier
-                        ]);
+                            echo json_encode
+                            ([
+                                "email" => $courriel,
+                                "username" => $utilisateur["nom"],
+                                "token" => $token,
+                                "userCalendars" => $info_calendrier
+                            ]);
 
-                    } catch (\Throwable $e){
-                        $pdo->rollBack();
-                        echo $e->getMessage();
-                        echo json_encode(["token" => false]);
+                        } catch (\Throwable $e){
+                            $pdo->rollBack();
+                            echo $e->getMessage();
+                            echo json_encode(["token" => false]);
+                        }
+
+                    } else {
+                        echo json_encode(["token" => false]); 
                     }
-
                 } else {
-                    echo json_encode(["token" => false]); 
+                    echo json_encode(["token" => false]);
                 }
             } else {
-                echo json_encode(["token" => false]);
+                echo json_encode(["message" => "Votre compte n'est pas encore vérifier"]);
             }
         }
 

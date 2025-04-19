@@ -60,6 +60,8 @@
                     $stmt = $pdo->prepare("UPDATE Utilisateur SET est_valide = ? WHERE courriel=?");
                     $stmt->execute([true,$email]);
 
+                    
+
                     $pdo->commit();
                 }catch(\Throwable $e){
                     $pdo->rollBack();
