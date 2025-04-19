@@ -8,9 +8,11 @@
 
     class Token{
         private $key;
+        public $global;
 
         public function __construct() {
             $this->key = constant('CLE_SECRETE');
+            $this->global = new GlobalMethode();
         }
     
         function verifierExpiration($token) {
@@ -38,9 +40,39 @@
 
         function verifierTokenEmail($tokenEmail){
             header('Content-Type: application/json');
-            //$data = json_decode(file_get_contents("php://input"), true);
+            $data = json_decode(file_get_contents("php://input"), true);
+            $pdo = $this->global->getPdo();
 
-            echo $tokenEmail;
+            try{
+                $decoded = JWT::decode($tokenEmail, new Key($this->key, 'HS256'));
+
+                $email = $decoded->email ?? null;
+                $motDePasse = $decoded->motDePasse ?? null;
+
+                if($email === null || $motDePasse === null){
+                    echo json_encode(["status" => false, "message" => "Email non valide dans le token"]);
+                    exit();
+                }
+
+                try{
+                    $pdo->beginTransaction();
+
+                    $stmt = $pdo->prepare("UPDATE Utilisateur SET est_valide = ? WHERE courriel=?");
+                    $stmt->execute([true,$email]);
+
+                    $pdo->commit();
+                }catch(\Throwable $e){
+                    $pdo->rollBack();
+                    http_response_code(401);
+                }
+
+            } catch(\Firebase\JWT\ExpiredException $e){
+                echo json_encode(["status" => false, "message" => "token expiré"]);
+                exit();
+            } catch(Exception $e){
+                echo json_encode(["status" => false, "message" => $e->getMessage()]);
+                exit();
+            }
         }
     }
 

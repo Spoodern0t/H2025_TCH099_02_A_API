@@ -2,8 +2,8 @@
     require 'vendor/autoload.php';
     require './api/services/globalMethode.php';
     require './config/config.php';
-    use \Firebase\JWT\JWT;
 
+    
     class Calendrier{
         public $global;
 
