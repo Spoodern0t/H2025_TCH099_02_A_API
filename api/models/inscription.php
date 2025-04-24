@@ -30,13 +30,13 @@
             if(json_last_error() !== JSON_ERROR_NONE){
                 http_response_code(400);
                 echo json_encode(["token" => false]);
-                exit;
+                exit();
             }
 
             // Verifier le format du tableau $data
             if(!is_array($data)){
                 echo json_encode(["token" => false]);
-                exit;
+                exit();
             }
 
             $nomUtilisateur = $data['user-name'];
@@ -48,7 +48,9 @@
             $confirmerCourriel = $stmt -> fetch();
 
             if($confirmerCourriel){
-                echo json_encode(["token" => false]);
+                http_response_code(400);
+                echo json_encode(["message" => "Le courriel est invalide."]);
+                exit();
             } else {
                 $MDPHache = password_hash($motDePasse, PASSWORD_DEFAULT);
 
@@ -85,7 +87,8 @@
 
                     $mail->send();
                 } catch(Exception $e){
-                    echo "Message failed" . $e->getMessage();
+                    http_response_code(400);
+                    echo json_encode(["message" => "La création du email à échouer."]);
                     exit();
                 }
 
@@ -118,7 +121,8 @@
 
                 } catch( \Throwable $e){
                     $pdo->rollback();
-                    echo json_encode(["token" => false]);
+                    http_response_code(400);
+                    echo json_encode(["message" => "La création du nouvelle utilisateur à échouer."]);
                 }
             }
         }

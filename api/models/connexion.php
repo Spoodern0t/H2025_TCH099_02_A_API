@@ -24,13 +24,14 @@
             // Verifier si les données ont été bien décoder
             if(json_last_error() !== JSON_ERROR_NONE){
                 http_response_code(400);
-                echo json_encode(["token" => false]);
+                echo json_encode(["message" => "La requetes n'est pas valide."]);
                 exit;
             }
 
             // Verifier le format du tableau $data
             if(!is_array($data)){
-                echo json_encode(["token" => false]);
+                http_response_code(400);
+                echo json_encode(["message" => "La requetes n'est pas valide."]);
                 exit;
             }
 
@@ -51,7 +52,7 @@
                         $payload = [
                             "id_utilisateur" => $utilisateur['id_utilisateur'],
                             "iat" => time(),
-                            // Expiration 24 heures pour l'instant. Modifier a l'avenir
+                            // Expiration 24 heures,
                             "exp" => time() + 86400  
                         ];
 
@@ -84,18 +85,21 @@
 
                         } catch (\Throwable $e){
                             $pdo->rollBack();
-                            echo $e->getMessage();
-                            echo json_encode(["token" => false]);
+                            http_response_code(400);
+                            echo json_encode(["message" => "Erreur lors de la connexion."]);
                         }
 
                     } else {
-                        echo json_encode(["token" => false]); 
+                        http_response_code(400);
+                        echo json_encode(["message" => "Le mot de passe ou le email est invalide."]);
                     }
                 } else {
-                    echo json_encode(["token" => false]);
+                    http_response_code(400);
+                    echo json_encode(["message" => "Aucun utilisateur trouver."]);
                 }
             } else {
-                echo json_encode(["message" => "Votre compte n'est pas encore vérifier"]);
+                http_response_code(400);
+                echo json_encode(["message" => "Votre compte n'est pas encore vérifier."]);
             }
         }
 

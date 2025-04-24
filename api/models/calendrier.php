@@ -26,15 +26,16 @@
                 ([
                    "message" => $tab_token['message'] 
                 ]);
-                return;
+                exit();
 
             } else {
                 $id_utilisateur = $tab_token['utilisateur'];
             }
 
             if($id_utilisateur === null){
-                echo json_encode(["token" => false]);
-                return;
+                http_response_code(400);
+                echo json_encode(["message" => "L'id de l'utilisateur n'est pas valide."]);
+                exit();
             }
 
             $stmt = $pdo->prepare("SELECT id_utilisateur, id_calendrier, nom_utilisateur, nom_calendrier, est_membre, description FROM Vue_Utilisateur_Calendrier WHERE id_utilisateur = ?");
@@ -59,26 +60,17 @@
                 ([
                    "message" => $tab_token['message'] 
                 ]);
-                return;
+                exit();
 
             } else {
                 $id_utilisateur = $tab_token['utilisateur'];
             }
 
             if($id_utilisateur === null){
-                echo json_encode(["token" => false]);
-                return;
+                http_response_code(400);
+                echo json_encode(["message" => "L'id de l'utilisateur n'est pas valide."]);
+                exit();
             }
-
-            // Ancienne méthode
-            /*
-            $id_utilisateur = $this->global->verifierToken($token);
-
-            if(!$id_utilisateur){
-                echo json_encode(["token" => false]);
-                return;
-            }
-            */
 
             $stmt = $pdo->prepare("SELECT * FROM Vue_Utilisateur_Calendrier WHERE id_utilisateur = ? AND id_calendrier = ?");
             $stmt->execute([$id_utilisateur, $id_calendrier]);
@@ -160,25 +152,17 @@
                 ([
                    "message" => $tab_token['message'] 
                 ]);
-                return;
+                exit();
 
             } else {
                 $id_utilisateur = $tab_token['utilisateur'];
             }
 
             if($id_utilisateur === null){
-                echo json_encode(["token" => false]);
-                return;
+                http_response_code(400);
+                echo json_encode(["message" => "L'id de l'utilisateur n'est pas valide."]);
+                exit();
             }
-
-            /*
-            $id_utilisateur = $this->global->verifierToken($token);
-
-            if(!$id_utilisateur){
-                echo json_encode(["token" => false]);
-                return;
-            }
-            */
 
             try{
                 $pdo->beginTransaction();
@@ -211,12 +195,12 @@
 
             } catch(\Throwable $e){
                 $pdo->rollBack();
-                echo json_encode(["token" => false]);
+                http_response_code(400);
+                echo json_encode(["message" => "Problème lors de la création du calendrier"]);
             }
 
         }
 
-        // TODO reparler au gars pour cette requetes
         function modifierCalendrier($id_calendrier){
             header('Content-type: application/json');
             $data = json_decode(file_get_contents("php://input"), true);
@@ -235,26 +219,17 @@
                 ([
                    "message" => $tab_token['message'] 
                 ]);
-                return;
+                exit();
 
             } else {
                 $id_utilisateur = $tab_token['utilisateur'];
             }
 
             if($id_utilisateur === null){
-                echo json_encode(["token" => false]);
-                return;
+                http_response_code(400);
+                echo json_encode(["message" => "L'id de l'utilisateur n'est pas valide."]);
+                exit();
             }
-
-            // Ancienne méthode
-            /*
-            $id_utilisateur = $this->global->verifierToken($token);
-
-            if(!$id_utilisateur){
-                echo json_encode(["token" => false]);
-                return;
-            }
-            */
 
             try{
                 $pdo->beginTransaction();
@@ -267,7 +242,8 @@
 
             } catch(\Throwable $e){
                 $pdo->rollBack();
-                echo json_encode(["token" => false]);
+                http_response_code(400);
+                echo json_encode(["message" => "Problème lors de la modification du calendrier."]);
             }
         }
 
@@ -288,26 +264,17 @@
                 ([
                    "message" => $tab_token['message'] 
                 ]);
-                return;
+                exit();
 
             } else {
                 $id_utilisateur = $tab_token['utilisateur'];
             }
 
             if($id_utilisateur === null){
-                echo json_encode(["token" => false]);
-                return;
+                http_response_code(400);
+                echo json_encode(["message" => "L'id de l'utilisateur n'est pas valide."]);
+                exit();
             }
-
-            // Ancienne méthode
-            /*
-            $id_utilisateur = $this->global->verifierToken($token);
-
-            if(!$id_utilisateur){
-                echo json_encode(["token" => false]);
-                return;
-            }
-            */
 
             $stmt = $pdo->prepare("SELECT auteur_id FROM Calendrier WHERE id_calendrier = ?");
             $stmt->execute([$id_calendrier]);
@@ -330,7 +297,8 @@
                 
             } catch(\Throwable $e){
                 $pdo->rollBack();
-                echo json_encode(["token" => false]);
+                http_response_code(400);
+                echo json_encode(["message" => "Problème lors de la suppression du calendrier."]);
             }
         }
     }

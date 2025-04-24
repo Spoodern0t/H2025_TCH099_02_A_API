@@ -10,7 +10,6 @@
             $this->global = new GlobalMethode();
         }
 
-        // TODO reparler de la requetes
         function creerElement($id_calendrier){
             header('Content-type: application/json');
             $data = json_decode(file_get_contents("php://input"), true);
@@ -43,27 +42,17 @@
                 ([
                    "message" => $tab_token['message'] 
                 ]);
-                return;
+                exit();
 
             } else {
                 $id_utilisateur = $tab_token['utilisateur'];
             }
 
             if($id_utilisateur === null){
-                echo json_encode(["token" => false]);
-                return;
+                http_response_code(400);
+                echo json_encode(["message" => "L'id de l'utilisateur n'est pas valide."]);
+                exit();
             }
-
-            // Ancienne méthode
-            /*
-            $id_utilisateur = $this->global->verifierToken($token);
-            if(!$id_utilisateur){
-                echo json_encode(["token" => false]);
-                return;
-            }
-            */
-
-            var_dump($id_evenement);
 
             try{
                 $pdo->beginTransaction();
@@ -71,7 +60,7 @@
                 $stmt = $pdo->prepare("INSERT INTO Element (id_evenement, id_calendrier, nom, description, date_debut, date_fin) VALUES (?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$id_evenement, $id_calendrier, $nom, $description, $date_debut, $date_fin]);
 
-                // A enlever plus tard
+                // Pour les test en locale
                 //$stmt = $pdo->prepare("SELECT * FROM Element WHERE id_calendrier = ? ORDER BY id_evenement DESC LIMIT 1");
 
                 $stmt = $pdo->prepare("SELECT TOP 1 * FROM Element WHERE id_calendrier = ? ORDER BY id_evenement DESC");
@@ -102,7 +91,8 @@
                     ]);
             }catch(\Throwable $e){
                 $pdo->rollback();
-                echo json_encode(["token" => false]);
+                http_response_code(400);
+                echo json_encode(["message" => "La création de l'élément à échouer."]);
             }
 
         }
@@ -139,27 +129,17 @@
                 ([
                    "message" => $tab_token['message'] 
                 ]);
-                return;
+                exit();
 
             } else {
                 $id_utilisateur = $tab_token['utilisateur'];
             }
 
             if($id_utilisateur === null){
-                echo json_encode(["token" => false]);
-                return;
+                http_response_code(400);
+                echo json_encode(["message" => "L'id de l'utilisateur n'est pas valide."]);
+                exit();
             }
-
-            // Ancienne methode
-            /*
-            $id_utilisateur = $this->global->verifierToken($token);
-            if(!$id_utilisateur){
-                echo json_encode(["token" => false]);
-                return;
-            }
-            */
-
-            var_dump($id_evenement . ", " . $id_element . ", " . $id_calendrier);
             
             try{
                 $pdo->beginTransaction();
@@ -171,7 +151,8 @@
                 http_response_code(200);
             } catch(\Throwable $e){
                 $pdo->rollback();
-                echo json_encode(["token" => false, "message" => $e->getMessage()]);
+                http_response_code(400);
+                echo json_encode(["message" => "La modification de l'èlèment à échouer."]);
             }
         }
 
@@ -192,25 +173,17 @@
                 ([
                    "message" => $tab_token['message'] 
                 ]);
-                return;
+                exit();
 
             } else {
                 $id_utilisateur = $tab_token['utilisateur'];
             }
 
             if($id_utilisateur === null){
-                echo json_encode(["token" => false]);
-                return;
+                http_response_code(400);
+                echo json_encode(["message" => "L'id de l'utilisateur n'est pas valide."]);
+                exit();
             }
-
-            // Ancienne méthode
-            /*
-            $id_utilisateur = $this->global->verifierToken($token);
-            if(!$id_utilisateur){
-                echo json_encode(["token" => false]);
-                return;
-            }
-            */
 
             try{
                 $pdo->beginTransaction();
@@ -222,7 +195,8 @@
                 http_response_code(200);
             }catch(\Throwable $e){
                 $pdo->rollback();
-                echo json_encode(["token" => false]);
+                http_response_code(400);
+                echo json_encode(["message" => "La suppresion de l'élément à échouer."]);
             }
 
         }

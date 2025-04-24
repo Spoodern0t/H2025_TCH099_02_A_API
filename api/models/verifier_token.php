@@ -5,7 +5,6 @@
     use \Firebase\JWT\JWT;
     use Firebase\JWT\Key;
 
-
     class Token{
         private $key;
         public $global;
@@ -50,7 +49,7 @@
                 $motDePasse = $decoded->motDePasse ?? null;
 
                 if($email === null || $motDePasse === null){
-                    echo json_encode(["status" => false, "message" => "Email non valide dans le token"]);
+                    echo json_encode(["message" => "Email non valide dans le token"]);
                     exit();
                 }
 
@@ -60,20 +59,19 @@
                     $stmt = $pdo->prepare("UPDATE Utilisateur SET est_valide = ? WHERE courriel=?");
                     $stmt->execute([true,$email]);
 
-                    
-
                     $pdo->commit();
                 }catch(\Throwable $e){
                     $pdo->rollBack();
                     http_response_code(401);
+                    echo json_encode(["message" => "La validation du client à échouer."]);
                 }
 
             } catch(\Firebase\JWT\ExpiredException $e){
-                echo json_encode(["status" => false, "message" => "token expiré"]);
-                exit();
+                http_response_code(400);
+                echo json_encode(["message" => "Le token à expirer."]);
             } catch(Exception $e){
-                echo json_encode(["status" => false, "message" => $e->getMessage()]);
-                exit();
+                http_response_code(400);
+                echo json_encode(["message" => "Une erreur est survenue lors de la vérification du token."]);
             }
         }
     }
