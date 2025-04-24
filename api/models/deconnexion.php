@@ -18,16 +18,17 @@
             // Verifier si les données ont été bien décoder
             if(json_last_error() !== JSON_ERROR_NONE){
                 http_response_code(400);
-                echo json_encode(["token" => false]);
+                echo json_encode(["message" => "La requetes n'est pas valide."]);
                 exit;
             }
 
             // Verifier le format du tableau $data
             if(!is_array($data)){
-                echo json_encode(["token" => false]);
+                http_response_code(400);
+                echo json_encode(["message" => "La requetes n'est pas valide."]);
                 exit;
-            }   
-
+            }  
+            
             $token = $data['token'];
 
             $stmt = $pdo-> prepare("DELETE FROM Connexion WHERE token = ?");
@@ -36,7 +37,8 @@
             if($stmt->rowCount() > 0){
                 http_response_code(200);
             } else {
-                echo json_encode(["token" => false]);
+                http_response_code(400);
+                echo json_encode(["message" => "La deconnexion n'a pas marcher."]);
             }
         }
     }

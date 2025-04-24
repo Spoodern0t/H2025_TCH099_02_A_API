@@ -4,6 +4,25 @@
 
     $routeur = new Router();
 
+    // Vérifier un token 
+    $routeur->post('/index.php/token', function() {
+        require_once './api/models/verifier_token.php';
+    });
+
+    // Vérifier du email
+    $routeur->get('/index.php/valider-email/{token}', function($emailToken) {
+        require_once './api/models/verifier_token.php';
+
+        $token = new Token();
+
+        if(method_exists($token, 'verifierTokenEmail')) {
+             $token->verifierTokenEmail($emailToken);
+        } else {
+            echo json_encode(["token" => false]);
+        }
+
+    });
+
     //Connexion d'un utilisateur
     $routeur->post('/index.php/inscription', function() {
         require_once './api/models/inscription.php';
@@ -143,6 +162,45 @@
             $evenement->supprimerEvenement($id_evenement);
         } else {
             json_encode(["token" => false]);
+        }
+    });
+
+    /*
+    * "Toutes les routes qui agissent en rapport avec les evemenents" 
+    */
+    $routeur->post('/index.php/calendrier/{id}/element', function($id_calendrier){
+        require_once './api/models/element.php';
+
+        $element = new Element();
+
+        if(method_exists($element, 'creerElement')){
+            $element->creerElement($id_calendrier);
+        } else {
+            echo json_encode(["token" => false]);
+        }
+    });
+
+    $routeur->put('/index.php/element/{$id_element}', function($id_element){
+        require_once './api/models/element.php';
+
+        $element = new Element();
+
+        if(method_exists($element, 'modifierElement')){
+            $element->modifierElement($id_element);
+        } else {
+            echo json_encode(["token" => false]);
+        }
+    });
+
+    $routeur->delete('/index.php/element/{$id_element}', function($id_element){
+        require_once './api/models/element.php';
+
+        $element = new Element();
+        
+        if(method_exists($element, 'supprimerElement')){
+            $element->supprimerElement($id_element);
+        } else {
+            echo json_encode(["token" => false]);
         }
     });
 
